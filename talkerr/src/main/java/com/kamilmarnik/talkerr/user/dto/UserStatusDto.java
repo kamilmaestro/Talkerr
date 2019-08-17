@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public enum UserStatus {
+public enum UserStatusDto {
   ADMIN,
   LOGGED
 }

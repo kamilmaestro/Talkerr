@@ -7,11 +7,11 @@ import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
 
-@Builder
+@Builder(toBuilder = true)
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Getter
 public class PostDto {
-  long id;
+  long postId;
   String content;
   Date date;
   long userId;
