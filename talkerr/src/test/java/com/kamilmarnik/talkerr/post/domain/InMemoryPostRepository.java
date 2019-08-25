@@ -59,8 +59,8 @@ class InMemoryPostRepository implements PostRepository {
 
   @Override
   public Post save(Post value) {
-    if(value.getPostId() == null) {
-      value = value.toBuilder().userId(new Random().nextLong()).build();
+    if(value.getPostId() == null || value.getPostId() == 0) {
+      value = value.toBuilder().postId(new Random().nextLong()).build();
     }
     values.put(value.getPostId(), value);
 

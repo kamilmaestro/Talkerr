@@ -12,7 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "post")
+@Table(name = "posts")
 class Post {
 
   @Id
@@ -34,8 +34,8 @@ class Post {
     return Post.builder()
         .postId(dto.getPostId())
         .content(dto.getContent())
-        .userId(dto.getUserId())
         .date(dto.getDate())
+        .userId(dto.getUserId())
         .build();
   }
 
@@ -43,8 +43,8 @@ class Post {
     return PostDto.builder()
         .postId(postId)
         .content(content)
-        .userId(userId)
         .date(date)
+        .userId(userId)
         .build();
   }
 }

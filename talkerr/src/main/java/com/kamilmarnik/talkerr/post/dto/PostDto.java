@@ -11,7 +11,7 @@ import java.util.Date;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Getter
 public class PostDto {
-  long postId;
+  Long postId;
   String content;
   Date date;
   long userId;

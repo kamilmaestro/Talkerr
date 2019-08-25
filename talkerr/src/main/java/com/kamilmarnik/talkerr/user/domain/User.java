@@ -2,23 +2,23 @@ package com.kamilmarnik.talkerr.user.domain;
 
 import com.kamilmarnik.talkerr.user.dto.UserDto;
 import com.kamilmarnik.talkerr.user.dto.UserStatusDto;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder()
+@Builder(toBuilder = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Table(name = "users")
 class User {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Getter
   @Column(name = "user_id")
   Long userId;
 
@@ -32,11 +32,16 @@ class User {
   @Column(name = "user_status")
   UserStatusDto status;
 
+  @Column(name = "created_on")
+  Date createdOn;
+
   static User fromDto(UserDto dto) {
     return User.builder()
         .userId(dto.getUserId())
         .login(dto.getLogin())
+        .password(dto.getPassword())
         .status(UserStatusDto.valueOf(dto.getStatus().name()))
+        .createdOn(dto.getCreatedOn())
         .build();
   }
 
@@ -44,7 +49,9 @@ class User {
     return UserDto.builder()
         .userId(userId)
         .login(login)
+        .password(password)
         .status(UserStatusDto.valueOf(status.name()))
+        .createdOn(createdOn)
         .build();
   }
 }
