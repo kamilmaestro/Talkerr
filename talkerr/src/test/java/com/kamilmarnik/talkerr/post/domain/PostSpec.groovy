@@ -20,7 +20,7 @@ class PostSpec extends Specification {
 
     def "user should be able to create a new post"() {
         given: "there is an user"
-            def user = userFacade.addUser(UserDto.builder().userId(USER_ID).status(UserStatusDto.LOGGED).build())
+            def user = userFacade.registerUser(UserDto.builder().userId(USER_ID).status(UserStatusDto.LOGGED).build())
         when: "user creates a new post"
             def post = postFacade.addPost(createNewPost(user.userId))
             def sndPost = postFacade.addPost(PostDto.builder().build())
