@@ -76,8 +76,8 @@ public class InMemoryUserRepository implements UserRepository {
   }
 
   @Override
-  public Optional<User> findById(Long aLong) {
-    return Optional.empty();
+  public Optional<User> findById(Long userId) {
+    return Optional.ofNullable(values.get(userId));
   }
 
   @Override
@@ -138,5 +138,10 @@ public class InMemoryUserRepository implements UserRepository {
   @Override
   public <S extends User> boolean exists(Example<S> example) {
     return false;
+  }
+
+  @Override
+  public Optional<User> findUserByLogin(String login) {
+    return Optional.ofNullable(values.get(login));
   }
 }

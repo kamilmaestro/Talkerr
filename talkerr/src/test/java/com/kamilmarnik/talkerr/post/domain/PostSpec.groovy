@@ -20,10 +20,10 @@ class PostSpec extends Specification {
 
     def "user should be able to create a new post"() {
         given: "there is an user"
-            def user = userFacade.registerUser(UserDto.builder().userId(USER_ID).status(UserStatusDto.LOGGED).build())
+            def user = userFacade.registerUser(registerNewUser(USER_ID, UserStatusDto.LOGGED))
         when: "user creates a new post"
-            def post = postFacade.addPost(createNewPost(user.userId))
-            def sndPost = postFacade.addPost(PostDto.builder().build())
+            def post = postFacade.addPost(createNewPost(user.userId, "FIRST POST"))
+            def sndPost = postFacade.addPost(createNewPost(user.userId, "SECOND POST"))
         then: "post is created"
             def createdPost = postFacade.getPost(post.postId)
         and: "post was created correctly"
@@ -45,6 +45,18 @@ class PostSpec extends Specification {
             .content(content)
             .date(date)
             .userId(userId)
+            .build()
+    }
+
+    private UserDto registerNewUser(long userId, UserStatusDto status) {
+        registerNewUser(userId, "DEFAULT_lOGIN", status)
+    }
+
+    private UserDto registerNewUser(long userId, String login, UserStatusDto status) {
+        return UserDto.builder()
+            .userId(userId)
+            .login(login)
+            .status(status)
             .build()
     }
 }
