@@ -12,7 +12,8 @@ import java.time.LocalDateTime
 
 class PostSpec extends Specification {
 
-    PostFacade postFacade = new PostFacadeCreator().createPostFacade(new InMemoryPostRepository())
+    PostFacade postFacade = new PostFacadeCreator().createPostFacade(new InMemoryPostRepository(),
+            new InMemoryUserRepository())
     UserFacade userFacade = new UserFacadeCreator().createUserFacade(new InMemoryUserRepository())
 
     long USER_ID = 1L
@@ -32,15 +33,15 @@ class PostSpec extends Specification {
             createdPost.userId == user.userId
     }
 
-    private PostDto createNewPost(long userId) {
+    private static PostDto createNewPost(long userId) {
         return createNewPost(userId, "DEFAULT CONTENT")
     }
 
-    private PostDto createNewPost(long userId, String content) {
+    private static PostDto createNewPost(long userId, String content) {
         return createNewPost(userId, content, LocalDateTime.now().toDate())
     }
 
-    private PostDto createNewPost(long userId, String content, Date date) {
+    private static PostDto createNewPost(long userId, String content, Date date) {
         return PostDto.builder()
             .content(content)
             .date(date)
@@ -48,11 +49,11 @@ class PostSpec extends Specification {
             .build()
     }
 
-    private UserDto registerNewUser(long userId, UserStatusDto status) {
+    private static UserDto registerNewUser(long userId, UserStatusDto status) {
         registerNewUser(userId, "DEFAULT_lOGIN", status)
     }
 
-    private UserDto registerNewUser(long userId, String login, UserStatusDto status) {
+    private static UserDto registerNewUser(long userId, String login, UserStatusDto status) {
         return UserDto.builder()
             .userId(userId)
             .login(login)
