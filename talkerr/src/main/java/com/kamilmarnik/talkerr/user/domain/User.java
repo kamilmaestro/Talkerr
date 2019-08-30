@@ -14,7 +14,7 @@ import java.util.Date;
 @Builder(toBuilder = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "users")
-class User {
+public class User {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
