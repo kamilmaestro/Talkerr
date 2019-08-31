@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Builder
@@ -16,11 +17,10 @@ public class UserFacade {
   UserRepository userRepository;
 
   public UserDto registerUser(UserDto user) throws UserAlreadyExistsException {
-    Optional<User> savedUserById = userRepository.findById(user.getUserId());
-    Optional<User> savedUserByLogin = userRepository.findUserByLogin(user.getLogin());
-
-    if(savedUserById.isPresent() || savedUserByLogin.isPresent()) {
-      throw new UserAlreadyExistsException("Can not register user: " + user.getLogin());
+    Objects.requireNonNull(user);
+    Optional<User> savedUser = userRepository.findUserByLogin(user.getLogin());
+    if(savedUser.isPresent()) {
+      throw new UserAlreadyExistsException("Such user is already registered");
     }
 
     return userRepository.save(User.fromDto(user)).dto();
@@ -28,7 +28,7 @@ public class UserFacade {
 
   public UserDto getUser(long userId) throws UserNotFoundException {
     return userRepository.findById(userId)
-        .orElseThrow(() -> new UserNotFoundException("Can not find user with id: " + userId))
+        .orElseThrow(() -> new UserNotFoundException("Can not find user with Id: " + userId))
         .dto();
   }
 }

@@ -12,16 +12,15 @@ import java.time.LocalDateTime
 
 class PostSpec extends Specification {
 
-    PostFacade postFacade = new PostFacadeCreator().createPostFacade(new InMemoryPostRepository(),
-            new InMemoryUserRepository())
     UserFacade userFacade = new UserFacadeCreator().createUserFacade(new InMemoryUserRepository())
+    PostFacade postFacade = new PostFacadeCreator().createPostFacade(new InMemoryPostRepository(), userFacade)
 
     long USER_ID = 1L
     long SND_USER_ID = 2L
 
     def "user should be able to create a new post"() {
         given: "there is an user"
-            def user = userFacade.registerUser(registerNewUser(USER_ID, UserStatusDto.LOGGED))
+            def user = userFacade.registerUser(registerNewUser(USER_ID, UserStatusDto.REGISTERED))
         when: "user creates a new post"
             def post = postFacade.addPost(createNewPost(user.userId, "FIRST POST"))
             def sndPost = postFacade.addPost(createNewPost(user.userId, "SECOND POST"))
@@ -50,14 +49,15 @@ class PostSpec extends Specification {
     }
 
     private static UserDto registerNewUser(long userId, UserStatusDto status) {
-        registerNewUser(userId, "DEFAULT_lOGIN", status)
+        registerNewUser(userId, "DEFAULT_lOGIN", status, LocalDateTime.now().toDate())
     }
 
-    private static UserDto registerNewUser(long userId, String login, UserStatusDto status) {
+    private static UserDto registerNewUser(long userId, String login, UserStatusDto status, Date createdOn) {
         return UserDto.builder()
             .userId(userId)
             .login(login)
             .status(status)
+            .createdOn(createdOn)
             .build()
     }
 }

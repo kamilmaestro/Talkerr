@@ -1,6 +1,6 @@
 package com.kamilmarnik.talkerr.post.domain;
 
-import com.kamilmarnik.talkerr.user.domain.UserRepository;
+import com.kamilmarnik.talkerr.user.domain.UserFacade;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +15,17 @@ class PostFacadeCreator {
   PostRepository postRepository;
 
   @Autowired
-  UserRepository userRepository;
+  UserFacade userFacade;
 
-  PostFacade createPostFacade(PostRepository postRepository, UserRepository userRepository) {
+  PostFacade createPostFacade(PostRepository postRepository, UserFacade userFacade) {
     return PostFacade.builder()
         .postRepository(postRepository)
-        .userRepository(userRepository)
+        .userFacade(userFacade)
         .build();
   }
 
   @Bean
   PostFacade createPostFacade() {
-    return createPostFacade(postRepository, userRepository);
+    return createPostFacade(postRepository, userFacade);
   }
 }
