@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.Date;
 
 @Entity
@@ -23,9 +24,11 @@ public class User {
   Long userId;
 
   @Column(name = "login")
+  @Size(min = UserDto.MIN_LOG_LEN, max = UserDto.MAX_LOG_LEN)
   String login;
 
   @Column(name = "password")
+  @Size(min = UserDto.MIN_PASS_LEN, max = UserDto.MAX_PASS_LEN)
   String password;
 
   @Enumerated(EnumType.STRING)

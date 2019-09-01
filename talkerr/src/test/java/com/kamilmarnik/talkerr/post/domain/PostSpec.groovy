@@ -49,13 +49,14 @@ class PostSpec extends Specification {
     }
 
     private static UserDto registerNewUser(long userId, UserStatusDto status) {
-        registerNewUser(userId, "DEFAULT_lOGIN", status, LocalDateTime.now().toDate())
+        registerNewUser(userId, "DefaultLogin", "DefaultPassword1", status, LocalDateTime.now().toDate())
     }
 
-    private static UserDto registerNewUser(long userId, String login, UserStatusDto status, Date createdOn) {
+    private static UserDto registerNewUser(long userId, String login, String password, UserStatusDto status, Date createdOn) {
         return UserDto.builder()
             .userId(userId)
             .login(login)
+            .password(password)
             .status(status)
             .createdOn(createdOn)
             .build()
