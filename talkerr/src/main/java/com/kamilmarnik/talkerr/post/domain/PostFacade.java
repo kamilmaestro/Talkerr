@@ -22,7 +22,7 @@ public class PostFacade {
   public PostDto addPost(PostDto post) throws UserNotFoundException, UserRoleException {
     Objects.requireNonNull(post);
     UserStatusDto userStatus = userFacade.getUser(post.getUserId()).getStatus();
-    if(userStatus != UserStatusDto.ADMIN && userStatus != UserStatusDto.REGISTERED) {
+    if(!UserStatusDto.ADMIN.equals(userStatus) && !UserStatusDto.REGISTERED.equals(userStatus)) {
       throw new UserRoleException("User with Id:" + post.getUserId() + " does not have a permission to add a new post");
     }
 
@@ -31,7 +31,7 @@ public class PostFacade {
 
   public PostDto getPost(long postId) throws PostNotFoundException {
     return postRepository.findById(postId)
-        .orElseThrow(() -> new PostNotFoundException("Post with Id: " + postId + "was not found"))
+        .orElseThrow(() -> new PostNotFoundException("Post with Id: " + postId + " was not found"))
         .dto();
   }
 }
