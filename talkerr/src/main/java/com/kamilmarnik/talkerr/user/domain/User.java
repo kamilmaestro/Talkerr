@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
@@ -23,19 +24,22 @@ public class User {
   @Column(name = "user_id")
   Long userId;
 
+  @NotNull
   @Column(name = "login")
   @Size(min = UserDto.MIN_LOG_LEN, max = UserDto.MAX_LOG_LEN)
   String login;
 
+  @NotNull
   @Column(name = "password")
   @Size(min = UserDto.MIN_PASS_LEN, max = UserDto.MAX_PASS_LEN)
   String password;
 
+  @NotNull
   @Enumerated(EnumType.STRING)
   @Column(name = "user_status")
   UserStatusDto status;
 
-  @Column(name = "created_on")
+  @Column(name = "created_on", columnDefinition = "TIMESTAMP WITH TIME ZONE NOT NULL")
   Date createdOn;
 
   static User fromDto(UserDto dto) {

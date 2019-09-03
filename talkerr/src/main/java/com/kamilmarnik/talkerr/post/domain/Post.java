@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
@@ -21,12 +22,15 @@ class Post {
   @Column(name = "post_id")
   Long postId;
 
+  @NotNull
   @Column(name = "content")
   String content;
 
-  @Column(name = "date")
+  @NotNull
+  @Column(name = "date", columnDefinition = "TIMESTAMP WITH TIME ZONE NOT NULL")
   Date date;
 
+  @NotNull
   @Column(name = "user_id")
   Long userId;
 

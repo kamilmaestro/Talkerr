@@ -6,20 +6,24 @@ import com.kamilmarnik.talkerr.post.exception.PostNotFoundException;
 import com.kamilmarnik.talkerr.user.exception.UserNotFoundException;
 import com.kamilmarnik.talkerr.user.exception.UserRoleException;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/post")
-@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RestController
 @Slf4j
 class PostController {
 
   PostFacade postFacade;
+
+  @Autowired
+  PostController(@Autowired PostFacade postFacade) {
+    this.postFacade = postFacade;
+  }
 
   @GetMapping("/{postId}")
   public ResponseEntity<PostDto> getPost(@PathVariable Long postId) {
