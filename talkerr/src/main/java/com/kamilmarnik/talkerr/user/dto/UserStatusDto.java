@@ -7,5 +7,5 @@ import lombok.experimental.FieldDefaults;
 public enum UserStatusDto {
   ADMIN,
   REGISTERED,
-  WAITING
+  GUEST
 }

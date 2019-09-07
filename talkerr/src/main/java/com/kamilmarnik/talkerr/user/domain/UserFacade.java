@@ -2,6 +2,7 @@ package com.kamilmarnik.talkerr.user.domain;
 
 import com.kamilmarnik.talkerr.user.dto.LoginAndPasswordVerifier;
 import com.kamilmarnik.talkerr.user.dto.UserDto;
+import com.kamilmarnik.talkerr.user.dto.UserStatusDto;
 import com.kamilmarnik.talkerr.user.exception.InvalidLoginException;
 import com.kamilmarnik.talkerr.user.exception.InvalidPasswordException;
 import com.kamilmarnik.talkerr.user.exception.UserAlreadyExistsException;
@@ -25,8 +26,11 @@ public class UserFacade {
     if(savedUser.isPresent()) {
       throw new UserAlreadyExistsException("Such user is already registered");
     }
-
     LoginAndPasswordVerifier.verifyLogAndPass(user.getLogin(), user.getPassword());
+
+    if(!user.getStatus().equals(UserStatusDto.ADMIN)) {
+      user = user.toBuilder().status(UserStatusDto.REGISTERED).build();
+    }
 
     return userRepository.save(User.fromDto(user)).dto();
   }
