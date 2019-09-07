@@ -14,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 import java.util.Objects;
 
 @Builder
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PostFacade {
 
   PostRepository postRepository;
@@ -36,13 +36,11 @@ public class PostFacade {
         .dto();
   }
 
-  public void deletePost(long postId, long userId) throws UserNotFoundException, PostNotFoundException {
-    UserDto user = userFacade.getUser(userId);
-    Objects.requireNonNull(user);
+  public void deletePost(long postId, long loggedUserId) throws UserNotFoundException, PostNotFoundException {
+    UserDto user = userFacade.getUser(loggedUserId);
     PostDto post = getPost(postId);
-    Objects.requireNonNull(post);
 
-    if(post.getUserId() == userId || user.getStatus().equals(UserStatusDto.ADMIN)) {
+    if(post.getUserId() == loggedUserId || user.getStatus().equals(UserStatusDto.ADMIN)) {
       postRepository.deleteById(postId);
     }
   }

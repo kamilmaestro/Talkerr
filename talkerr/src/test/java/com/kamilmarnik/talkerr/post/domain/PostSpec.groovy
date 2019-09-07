@@ -1,6 +1,7 @@
 package com.kamilmarnik.talkerr.post.domain
 
 import com.kamilmarnik.talkerr.post.dto.PostDto
+import com.kamilmarnik.talkerr.post.exception.PostNotFoundException
 import com.kamilmarnik.talkerr.user.domain.InMemoryUserRepository
 import com.kamilmarnik.talkerr.user.domain.UserFacade
 import com.kamilmarnik.talkerr.user.domain.UserFacadeCreator
@@ -15,8 +16,10 @@ class PostSpec extends Specification {
     UserFacade userFacade = new UserFacadeCreator().createUserFacade(new InMemoryUserRepository())
     PostFacade postFacade = new PostFacadeCreator().createPostFacade(new InMemoryPostRepository(), userFacade)
 
+    long ADMIN_ID = 54321L
     long USER_ID = 1L
     long SND_USER_ID = 2L
+    def ADMIN = userFacade.registerUser(registerNewUser(USER_ID, UserStatusDto.ADMIN))
 
     def "user should be able to create a new post"() {
         given: "there is an user"
@@ -30,6 +33,19 @@ class PostSpec extends Specification {
             createdPost.postId == post.postId
         and: "post was created by user"
             createdPost.userId == user.userId
+    }
+
+    def "user should be able to delete a post if he is its creator" () {
+        given: "there is an user"
+            def user = userFacade.registerUser(registerNewUser(USER_ID, UserStatusDto.REGISTERED))
+        and: "there is a post created by user"
+            def post = postFacade.addPost(createNewPost(user.userId, "POST"))
+        when: "user deletes the post"
+            postFacade.deletePost(post.postId, user.userId)
+        and: "checks deleted post"
+            postFacade.getPost(post.getPostId())
+        then: "post is deleted"
+            thrown PostNotFoundException.class
     }
 
     private static PostDto createNewPost(long userId) {

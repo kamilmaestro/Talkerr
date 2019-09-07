@@ -38,13 +38,13 @@ class InMemoryPostRepository implements PostRepository {
   }
 
   @Override
-  public void deleteById(Long aLong) {
-
+  public void deleteById(Long postId) {
+    values.remove(postId);
   }
 
   @Override
   public void delete(Post post) {
-
+    deleteById(post.dto().getPostId());
   }
 
   @Override
