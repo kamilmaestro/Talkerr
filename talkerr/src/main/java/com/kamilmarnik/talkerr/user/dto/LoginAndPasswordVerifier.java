@@ -12,7 +12,7 @@ public final class LoginAndPasswordVerifier {
     throw new AssertionError("This class can not be instantiated!");
   }
 
-  public static void verifyLogAndPass(String login, String password) throws InvalidLoginException, InvalidPasswordException {
+  public static void verifyRegisteredLogAndPass(String login, String password) throws InvalidLoginException, InvalidPasswordException {
     if(!isCorrectRegisteredLogin(login)) {
       throw new InvalidLoginException("Incorrect registered login!");
     }

@@ -1,30 +1,27 @@
 package com.kamilmarnik.talkerr.post.domain
 
-
 import com.kamilmarnik.talkerr.post.exception.PostNotFoundException
 import com.kamilmarnik.talkerr.user.domain.InMemoryUserRepository
 import com.kamilmarnik.talkerr.user.domain.UserFacade
 import com.kamilmarnik.talkerr.user.domain.UserFacadeCreator
-import com.kamilmarnik.talkerr.user.dto.UserStatusDto
+import com.kamilmarnik.talkerr.user.domain.UserRepository
 import spock.lang.Specification
 
-import static com.kamilmarnik.talkerr.post.domain.PostCreator.*
-import static com.kamilmarnik.talkerr.user.domain.UserCreator.*
+import static com.kamilmarnik.talkerr.post.domain.PostCreator.createNewPost
+import static com.kamilmarnik.talkerr.user.domain.UserCreator.createAdmin
+import static com.kamilmarnik.talkerr.user.domain.UserCreator.registerNewUser
 
 class PostSpec extends Specification {
 
-    UserFacade userFacade = new UserFacadeCreator().createUserFacade(new InMemoryUserRepository())
+    UserRepository userRepository = new InMemoryUserRepository()
+    UserFacade userFacade = new UserFacadeCreator().createUserFacade(userRepository)
     PostFacade postFacade = new PostFacadeCreator().createPostFacade(new InMemoryPostRepository(), userFacade)
 
-    long ADMIN_ID = 54321L
-    long USER_ID = 1L
-    long SND_USER_ID = 2L
-    def ADMIN = userFacade.registerUser(registerNewUser(ADMIN_ID, UserStatusDto.ADMIN))
-
+    def ADMIN = createAdmin(userRepository)
 
     def "user should be able to create a new post"() {
         given: "there is an user"
-            def user = userFacade.registerUser(registerNewUser(USER_ID, UserStatusDto.REGISTERED))
+            def user = userFacade.registerUser(registerNewUser())
         when: "user creates a new post"
             def post = postFacade.addPost(createNewPost(user.userId, "FIRST POST"))
             def sndPost = postFacade.addPost(createNewPost(user.userId, "SECOND POST"))
@@ -39,7 +36,7 @@ class PostSpec extends Specification {
 
     def "user should be able to delete a post if he is its creator" () {
         given: "there is an user"
-            def user = userFacade.registerUser(registerNewUser(USER_ID, UserStatusDto.REGISTERED))
+            def user = userFacade.registerUser(registerNewUser())
         and: "there is a post created by user"
             def post = postFacade.addPost(createNewPost(user.userId, "POST"))
         when: "user deletes the post"
@@ -52,7 +49,7 @@ class PostSpec extends Specification {
 
     def "admin should be able to delete any post" () {
         given: "there is an user and admin"
-            def user = userFacade.registerUser(registerNewUser(USER_ID, UserStatusDto.REGISTERED))
+            def user = userFacade.registerUser(registerNewUser())
         and: "there is a post created by user"
             def post = postFacade.addPost(createNewPost(user.userId, "POST"))
         when: "admin deletes the post created by other user"

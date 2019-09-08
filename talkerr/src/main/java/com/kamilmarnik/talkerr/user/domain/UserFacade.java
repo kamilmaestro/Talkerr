@@ -1,5 +1,6 @@
 package com.kamilmarnik.talkerr.user.domain;
 
+import com.kamilmarnik.talkerr.user.dto.LoggedUser;
 import com.kamilmarnik.talkerr.user.dto.LoginAndPasswordVerifier;
 import com.kamilmarnik.talkerr.user.dto.UserDto;
 import com.kamilmarnik.talkerr.user.dto.UserStatusDto;
@@ -11,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -20,24 +22,29 @@ public class UserFacade {
 
   UserRepository userRepository;
 
-  public UserDto registerUser(UserDto user) throws UserAlreadyExistsException, InvalidLoginException, InvalidPasswordException {
+  public UserDto registerUser(LoggedUser user) throws UserAlreadyExistsException, InvalidLoginException, InvalidPasswordException {
     Objects.requireNonNull(user);
     Optional<User> savedUser = userRepository.findUserByLogin(user.getLogin());
     if(savedUser.isPresent()) {
       throw new UserAlreadyExistsException("Such user is already registered");
     }
-    LoginAndPasswordVerifier.verifyLogAndPass(user.getLogin(), user.getPassword());
+    LoginAndPasswordVerifier.verifyRegisteredLogAndPass(user.getLogin(), user.getPassword());
 
-    if(!user.getStatus().equals(UserStatusDto.ADMIN)) {
-      user = user.toBuilder().status(UserStatusDto.REGISTERED).build();
-    }
-
-    return userRepository.save(User.fromDto(user)).dto();
+    return userRepository.save(User.fromDto(createUser(user))).dto();
   }
 
   public UserDto getUser(long userId) throws UserNotFoundException {
     return userRepository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException("Can not find user with Id: " + userId))
         .dto();
+  }
+
+  private UserDto createUser(LoggedUser user) {
+    return UserDto.builder()
+        .login(user.getLogin())
+        .password(user.getPassword())
+        .status(UserStatusDto.REGISTERED)
+        .createdOn(java.sql.Date.valueOf(LocalDate.now()))
+        .build();
   }
 }
