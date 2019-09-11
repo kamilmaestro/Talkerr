@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Builder(toBuilder = true)
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -13,6 +13,6 @@ import java.util.Date;
 public class PostDto {
   Long postId;
   String content;
-  Date date;
+  LocalDateTime createdOn;
   long userId;
 }

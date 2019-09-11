@@ -10,13 +10,13 @@ abstract class PostCreator {
     }
 
     static PostDto createNewPost(long userId, String content) {
-        return createNewPost(userId, content, LocalDateTime.now().toDate())
+        return createNewPost(userId, content, LocalDateTime.now())
     }
 
-    static PostDto createNewPost(long userId, String content, Date date) {
+    static PostDto createNewPost(long userId, String content, LocalDateTime date) {
         return PostDto.builder()
                 .content(content)
-                .date(date)
+                .createdOn(date)
                 .userId(userId)
                 .build()
     }

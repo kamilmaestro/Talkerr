@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Builder
@@ -27,7 +28,7 @@ public class PostFacade {
       throw new UserRoleException("User with Id:" + post.getUserId() + " does not have a permission to add a new post");
     }
 
-    return postRepository.save(Post.fromDto(post)).dto();
+    return postRepository.save(Post.fromDto(createPost(post))).dto();
   }
 
   public PostDto getPost(long postId) throws PostNotFoundException {
@@ -43,5 +44,13 @@ public class PostFacade {
     if(post.getUserId() == loggedUserId || user.getStatus().equals(UserStatusDto.ADMIN)) {
       postRepository.deleteById(postId);
     }
+  }
+
+  private PostDto createPost(PostDto post) {
+    return PostDto.builder()
+        .content(post.getContent())
+        .userId(post.getUserId())
+        .createdOn(LocalDateTime.now())
+        .build();
   }
 }

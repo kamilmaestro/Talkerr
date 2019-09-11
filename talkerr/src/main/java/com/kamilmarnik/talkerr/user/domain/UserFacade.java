@@ -12,7 +12,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -44,7 +44,7 @@ public class UserFacade {
         .login(user.getLogin())
         .password(user.getPassword())
         .status(UserStatusDto.REGISTERED)
-        .createdOn(java.sql.Date.valueOf(LocalDate.now()))
+        .registeredOn(LocalDateTime.now())
         .build();
   }
 }

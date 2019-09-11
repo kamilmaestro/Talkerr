@@ -6,7 +6,7 @@ import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
@@ -27,8 +27,8 @@ class Post {
   String content;
 
   @NotNull
-  @Column(name = "date", columnDefinition = "TIMESTAMP WITH TIME ZONE NOT NULL")
-  Date date;
+  @Column(name = "created_on", columnDefinition = "TIMESTAMP WITH TIME ZONE NOT NULL")
+  LocalDateTime createdOn;
 
   @NotNull
   @Column(name = "user_id")
@@ -38,7 +38,7 @@ class Post {
     return Post.builder()
         .postId(dto.getPostId())
         .content(dto.getContent())
-        .date(dto.getDate())
+        .createdOn(dto.getCreatedOn())
         .userId(dto.getUserId())
         .build();
   }
@@ -47,7 +47,7 @@ class Post {
     return PostDto.builder()
         .postId(postId)
         .content(content)
-        .date(date)
+        .createdOn(createdOn)
         .userId(userId)
         .build();
   }

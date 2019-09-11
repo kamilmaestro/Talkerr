@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
@@ -39,8 +39,8 @@ public class User {
   @Column(name = "user_status")
   UserStatusDto status;
 
-  @Column(name = "created_on", columnDefinition = "TIMESTAMP WITH TIME ZONE NOT NULL")
-  Date createdOn;
+  @Column(name = "registered_on", columnDefinition = "TIMESTAMP WITH TIME ZONE NOT NULL")
+  LocalDateTime registeredOn;
 
   static User fromDto(UserDto dto) {
     return User.builder()
@@ -48,7 +48,7 @@ public class User {
         .login(dto.getLogin())
         .password(dto.getPassword())
         .status(UserStatusDto.valueOf(dto.getStatus().name()))
-        .createdOn(dto.getCreatedOn())
+        .registeredOn(dto.getRegisteredOn())
         .build();
   }
 
@@ -58,7 +58,7 @@ public class User {
         .login(login)
         .password(password)
         .status(UserStatusDto.valueOf(status.name()))
-        .createdOn(createdOn)
+        .registeredOn(registeredOn)
         .build();
   }
 }

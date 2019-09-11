@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Builder(toBuilder = true)
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -20,5 +20,5 @@ public class UserDto {
   String login;
   String password;
   UserStatusDto status;
-  Date createdOn;
+  LocalDateTime registeredOn;
 }
