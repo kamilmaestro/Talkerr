@@ -1,5 +1,6 @@
-package com.kamilmarnik.talkerr.user.dto;
+package com.kamilmarnik.talkerr.logic;
 
+import com.kamilmarnik.talkerr.user.dto.UserDto;
 import com.kamilmarnik.talkerr.user.exception.InvalidLoginException;
 import com.kamilmarnik.talkerr.user.exception.InvalidPasswordException;
 import lombok.AccessLevel;

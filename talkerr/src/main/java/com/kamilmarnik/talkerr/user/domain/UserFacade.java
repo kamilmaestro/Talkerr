@@ -1,7 +1,7 @@
 package com.kamilmarnik.talkerr.user.domain;
 
-import com.kamilmarnik.talkerr.user.dto.LoggedUser;
-import com.kamilmarnik.talkerr.user.dto.LoginAndPasswordVerifier;
+import com.kamilmarnik.talkerr.user.dto.LoggedUserDto;
+import com.kamilmarnik.talkerr.logic.LoginAndPasswordVerifier;
 import com.kamilmarnik.talkerr.user.dto.UserDto;
 import com.kamilmarnik.talkerr.user.dto.UserStatusDto;
 import com.kamilmarnik.talkerr.user.exception.InvalidLoginException;
@@ -22,7 +22,7 @@ public class UserFacade {
 
   UserRepository userRepository;
 
-  public UserDto registerUser(LoggedUser user) throws UserAlreadyExistsException, InvalidLoginException, InvalidPasswordException {
+  public UserDto registerUser(LoggedUserDto user) throws UserAlreadyExistsException, InvalidLoginException, InvalidPasswordException {
     Objects.requireNonNull(user);
     Optional<User> savedUser = userRepository.findUserByLogin(user.getLogin());
     if(savedUser.isPresent()) {
@@ -39,7 +39,7 @@ public class UserFacade {
         .dto();
   }
 
-  private UserDto createUser(LoggedUser user) {
+  private UserDto createUser(LoggedUserDto user) {
     return UserDto.builder()
         .login(user.getLogin())
         .password(user.getPassword())

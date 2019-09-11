@@ -1,5 +1,6 @@
 package com.kamilmarnik.talkerr.post.domain;
 
+import com.kamilmarnik.talkerr.post.dto.CreatedPostDto;
 import com.kamilmarnik.talkerr.post.dto.PostDto;
 import com.kamilmarnik.talkerr.post.exception.PostNotFoundException;
 import com.kamilmarnik.talkerr.user.domain.UserFacade;
@@ -21,7 +22,7 @@ public class PostFacade {
   PostRepository postRepository;
   UserFacade userFacade;
 
-  public PostDto addPost(PostDto post) throws UserNotFoundException, UserRoleException {
+  public PostDto addPost(CreatedPostDto post) throws UserNotFoundException, UserRoleException {
     Objects.requireNonNull(post);
     UserStatusDto userStatus = userFacade.getUser(post.getUserId()).getStatus();
     if(!UserStatusDto.ADMIN.equals(userStatus) && !UserStatusDto.REGISTERED.equals(userStatus)) {
@@ -46,7 +47,7 @@ public class PostFacade {
     }
   }
 
-  private PostDto createPost(PostDto post) {
+  private PostDto createPost(CreatedPostDto post) {
     return PostDto.builder()
         .content(post.getContent())
         .userId(post.getUserId())

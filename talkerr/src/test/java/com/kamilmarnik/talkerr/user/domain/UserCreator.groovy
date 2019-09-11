@@ -1,18 +1,18 @@
 package com.kamilmarnik.talkerr.user.domain
 
-import com.kamilmarnik.talkerr.user.dto.LoggedUser
+import com.kamilmarnik.talkerr.user.dto.LoggedUserDto
 import com.kamilmarnik.talkerr.user.dto.UserDto
 import com.kamilmarnik.talkerr.user.dto.UserStatusDto
 
 import java.time.LocalDateTime
 
 abstract class UserCreator {
-    static LoggedUser registerNewUser() {
+    static LoggedUserDto registerNewUser() {
         registerNewUser("DefLog", "DefPass123")
     }
 
-    static LoggedUser registerNewUser(String login, String password) {
-        LoggedUser.builder()
+    static LoggedUserDto registerNewUser(String login, String password) {
+        LoggedUserDto.builder()
             .login(login)
             .password(password)
             .build()

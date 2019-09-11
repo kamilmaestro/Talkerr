@@ -1,7 +1,7 @@
 package com.kamilmarnik.talkerr.user;
 
 import com.kamilmarnik.talkerr.user.domain.UserFacade;
-import com.kamilmarnik.talkerr.user.dto.LoggedUser;
+import com.kamilmarnik.talkerr.user.dto.LoggedUserDto;
 import com.kamilmarnik.talkerr.user.dto.UserDto;
 import com.kamilmarnik.talkerr.user.exception.InvalidLoginException;
 import com.kamilmarnik.talkerr.user.exception.InvalidPasswordException;
@@ -40,7 +40,7 @@ class UserController {
   }
 
   @PostMapping("/")
-  public ResponseEntity<UserDto> registerUser(@RequestBody LoggedUser user) {
+  public ResponseEntity<UserDto> registerUser(@RequestBody LoggedUserDto user) {
     try {
       UserDto registeredUser = userFacade.registerUser(user);
       return ResponseEntity.ok(registeredUser);
