@@ -2,15 +2,14 @@ package com.kamilmarnik.talkerr.user.domain;
 
 import com.kamilmarnik.talkerr.user.dto.LoggedUserDto;
 import com.kamilmarnik.talkerr.logic.LoginAndPasswordVerifier;
+import com.kamilmarnik.talkerr.logic.LoggedUserGetter;
 import com.kamilmarnik.talkerr.user.dto.UserDto;
 import com.kamilmarnik.talkerr.user.dto.UserStatusDto;
-import com.kamilmarnik.talkerr.user.exception.InvalidLoginException;
-import com.kamilmarnik.talkerr.user.exception.InvalidPasswordException;
-import com.kamilmarnik.talkerr.user.exception.UserAlreadyExistsException;
-import com.kamilmarnik.talkerr.user.exception.UserNotFoundException;
+import com.kamilmarnik.talkerr.user.exception.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -36,6 +35,12 @@ public class UserFacade {
   public UserDto getUser(long userId) throws UserNotFoundException {
     return userRepository.findById(userId)
         .orElseThrow(() -> new UserNotFoundException("Can not find user with Id: " + userId))
+        .dto();
+  }
+
+  public UserDto getLoggedUserData() throws LoggedUserNotFoundException {
+    return userRepository.findUserByLogin(LoggedUserGetter.getLoggedUserName())
+        .orElseThrow(() -> new UsernameNotFoundException("Can not find user"))
         .dto();
   }
 
