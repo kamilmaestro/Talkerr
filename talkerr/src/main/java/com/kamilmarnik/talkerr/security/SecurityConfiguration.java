@@ -1,5 +1,6 @@
 package com.kamilmarnik.talkerr.security;
 
+import com.kamilmarnik.talkerr.user.domain.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
