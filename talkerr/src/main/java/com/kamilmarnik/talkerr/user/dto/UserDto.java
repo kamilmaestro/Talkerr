@@ -18,7 +18,6 @@ public class UserDto {
 
   Long userId;
   String login;
-  String password;
   UserStatusDto status;
   LocalDateTime registeredOn;
 }

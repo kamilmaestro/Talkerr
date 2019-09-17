@@ -1,7 +1,7 @@
 package com.kamilmarnik.talkerr.user.dto;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,24 +11,27 @@ import java.util.Collection;
 import java.util.Collections;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@AllArgsConstructor
+@Builder
 @Getter
 public class UserPrincipal implements org.springframework.security.core.userdetails.UserDetails {
-  UserDto user;
+  Long userId;
+  String userName;
+  String password;
+  UserStatusDto role;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return Collections.singleton(new SimpleGrantedAuthority(user.getStatus().toString()));
+    return Collections.singleton(new SimpleGrantedAuthority(role.toString()));
   }
 
   @Override
   public String getPassword() {
-    return user.getPassword();
+    return password;
   }
 
   @Override
   public String getUsername() {
-    return user.getLogin();
+    return userName;
   }
 
   @Override

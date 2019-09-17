@@ -29,7 +29,7 @@ public class UserFacade {
     }
     LoginAndPasswordVerifier.verifyRegisteredLogAndPass(user.getLogin(), user.getPassword());
 
-    return userRepository.save(User.fromDto(createUser(user))).dto();
+    return userRepository.save(createUser(user)).dto();
   }
 
   public UserDto getUser(long userId) throws UserNotFoundException {
@@ -44,10 +44,9 @@ public class UserFacade {
         .dto();
   }
 
-  private UserDto createUser(LoggedUserDto user) {
-    return UserDto.builder()
+  private User createUser(LoggedUserDto user) {
+    return User.builder()
         .login(user.getLogin())
-        .password(user.getPassword())
         .status(UserStatusDto.REGISTERED)
         .registeredOn(LocalDateTime.now())
         .build();

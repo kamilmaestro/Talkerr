@@ -19,6 +19,11 @@ public class UserDetailsServiceImpl implements org.springframework.security.core
     User user = userRepository.findUserByLogin(userName)
         .orElseThrow(() -> new UsernameNotFoundException("Can not find user with such username: " + userName));
 
-    return new UserPrincipal(user.dto());
+    return UserPrincipal.builder()
+        .userId(user.getUserId())
+        .userName(user.getLogin())
+        .password(user.getPassword())
+        .role(user.getStatus())
+        .build();
   }
 }

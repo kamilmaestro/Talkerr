@@ -24,16 +24,20 @@ public class User {
   @Column(name = "user_id")
   Long userId;
 
+  @Getter
   @NotNull
   @Column(name = "login")
   @Size(min = UserDto.MIN_LOG_LEN, max = UserDto.MAX_LOG_LEN)
   String login;
 
+  @Setter
+  @Getter
   @NotNull
   @Column(name = "password")
   @Size(min = UserDto.MIN_PASS_LEN, max = UserDto.MAX_PASS_LEN)
   String password;
 
+  @Getter
   @NotNull
   @Enumerated(EnumType.STRING)
   @Column(name = "user_status")
@@ -46,7 +50,6 @@ public class User {
     return User.builder()
         .userId(dto.getUserId())
         .login(dto.getLogin())
-        .password(dto.getPassword())
         .status(UserStatusDto.valueOf(dto.getStatus().name()))
         .registeredOn(dto.getRegisteredOn())
         .build();
@@ -56,7 +59,6 @@ public class User {
     return UserDto.builder()
         .userId(userId)
         .login(login)
-        .password(password)
         .status(UserStatusDto.valueOf(status.name()))
         .registeredOn(registeredOn)
         .build();

@@ -19,13 +19,12 @@ abstract class UserCreator {
     }
 
     static UserDto createUserDto(UserStatusDto status) {
-        createUserDto("DefLog", "DefPass123", status, LocalDateTime.now())
+        createUserDto("DefLog", status, LocalDateTime.now())
     }
 
-    static UserDto createUserDto(String login, String password, UserStatusDto status, LocalDateTime createdOn) {
+    static UserDto createUserDto(String login, UserStatusDto status, LocalDateTime createdOn) {
         UserDto.builder()
             .login(login)
-            .password(password)
             .status(status)
             .registeredOn(createdOn)
             .build()
