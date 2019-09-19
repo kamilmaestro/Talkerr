@@ -30,7 +30,7 @@ public class User {
   @Size(min = UserDto.MIN_LOG_LEN, max = UserDto.MAX_LOG_LEN)
   String login;
 
-  @Setter
+  @Setter(value = AccessLevel.PACKAGE)
   @Getter
   @NotNull
   @Column(name = "password")
@@ -41,7 +41,8 @@ public class User {
   @NotNull
   @Enumerated(EnumType.STRING)
   @Column(name = "user_status")
-  UserStatusDto status;
+  @Builder.Default
+  UserStatusDto status = UserStatusDto.GUEST;
 
   @Column(name = "registered_on", columnDefinition = "TIMESTAMP WITH TIME ZONE NOT NULL")
   LocalDateTime registeredOn;
