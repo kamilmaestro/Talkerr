@@ -1,11 +1,14 @@
 package com.kamilmarnik.talkerr.user.domain;
 
-import com.kamilmarnik.talkerr.user.dto.LoggedUserDto;
-import com.kamilmarnik.talkerr.logic.LoginAndPasswordVerifier;
 import com.kamilmarnik.talkerr.logic.LoggedUserGetter;
+import com.kamilmarnik.talkerr.logic.LoginAndPasswordVerifier;
+import com.kamilmarnik.talkerr.user.dto.LoggedUserDto;
 import com.kamilmarnik.talkerr.user.dto.UserDto;
 import com.kamilmarnik.talkerr.user.dto.UserStatusDto;
-import com.kamilmarnik.talkerr.user.exception.*;
+import com.kamilmarnik.talkerr.user.exception.InvalidLoginException;
+import com.kamilmarnik.talkerr.user.exception.InvalidPasswordException;
+import com.kamilmarnik.talkerr.user.exception.UserAlreadyExistsException;
+import com.kamilmarnik.talkerr.user.exception.UserNotFoundException;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.experimental.FieldDefaults;
@@ -23,10 +26,7 @@ public class UserFacade {
 
   public UserDto registerUser(LoggedUserDto user) throws UserAlreadyExistsException, InvalidLoginException, InvalidPasswordException {
     Objects.requireNonNull(user);
-    Optional<User> savedUser = userRepository.findUserByLogin(user.getLogin());
-    if(savedUser.isPresent()) {
-      throw new UserAlreadyExistsException("Such user is already registered");
-    }
+    checkIfUserExists(user.getLogin());
     LoginAndPasswordVerifier.verifyRegisteredLogAndPass(user.getLogin(), user.getPassword());
 
     return userRepository.save(createUser(user)).dto();
@@ -38,10 +38,17 @@ public class UserFacade {
         .dto();
   }
 
-  public UserDto getLoggedUserData() throws LoggedUserNotFoundException {
+  public UserDto getLoggedUserName() {
     return userRepository.findUserByLogin(LoggedUserGetter.getLoggedUserName())
         .orElseThrow(() -> new UsernameNotFoundException("Can not find user"))
         .dto();
+  }
+
+  private void checkIfUserExists(String login) throws UserAlreadyExistsException {
+    Optional<User> savedUser = userRepository.findUserByLogin(login);
+    if(savedUser.isPresent()) {
+      throw new UserAlreadyExistsException("Such user is already registered");
+    }
   }
 
   private User createUser(LoggedUserDto user) {

@@ -1,11 +1,11 @@
 package com.kamilmarnik.talkerr.logic;
 
-import com.kamilmarnik.talkerr.user.exception.LoggedUserNotFoundException;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public final class LoggedUserGetter {
@@ -14,18 +14,24 @@ public final class LoggedUserGetter {
     throw new AssertionError("This class can not be instantiated!");
   }
 
-  public static String getLoggedUserName() throws LoggedUserNotFoundException {
+  public static UserDetails getLoggedUserDetails() {
     SecurityContext context = SecurityContextHolder.getContext();
-    String userName = null;
+    UserDetails loggedUserDetails = null;
     if(context != null) {
       Authentication auth = context.getAuthentication();
       if(auth != null) {
-        userName = auth.getName();
+        Object principal = auth.getPrincipal();
+        if (principal instanceof UserDetails) {
+          loggedUserDetails = (UserDetails) principal;
+        } else {
+          throw new RuntimeException("Can not get User Details");
+        }
       }
     }
-    if(userName == null) {
-      throw new LoggedUserNotFoundException("Can not find logged in user!");
-    }
-    return userName;
+    return loggedUserDetails;
+  }
+
+  public static String getLoggedUserName() {
+    return getLoggedUserDetails().getUsername();
   }
 }

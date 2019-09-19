@@ -13,7 +13,7 @@ import java.util.Collections;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Builder
 @Getter
-public class UserPrincipal implements org.springframework.security.core.userdetails.UserDetails {
+public class CustomUserDetails implements org.springframework.security.core.userdetails.UserDetails {
   Long userId;
   String userName;
   String password;
