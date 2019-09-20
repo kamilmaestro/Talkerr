@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -23,6 +24,7 @@ import java.util.Optional;
 public class UserFacade {
 
   UserRepository userRepository;
+  PasswordEncoder passwordEncoder;
 
   public UserDto registerUser(LoggedUserDto user) throws UserAlreadyExistsException, InvalidLoginException, InvalidPasswordException {
     Objects.requireNonNull(user);
@@ -54,7 +56,7 @@ public class UserFacade {
   private User createUser(LoggedUserDto user) {
     return User.builder()
         .login(user.getLogin())
-        .password(user.getPassword())
+        .password(passwordEncoder.encode(user.getPassword()))
         .status(UserStatusDto.REGISTERED)
         .registeredOn(LocalDateTime.now())
         .build();

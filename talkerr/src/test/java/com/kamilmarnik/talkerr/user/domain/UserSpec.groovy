@@ -1,13 +1,16 @@
 package com.kamilmarnik.talkerr.user.domain
 
 import com.kamilmarnik.talkerr.user.dto.UserStatusDto
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 import spock.lang.Specification
 
-import static com.kamilmarnik.talkerr.user.domain.UserCreator.*
+import static com.kamilmarnik.talkerr.user.domain.UserCreator.registerNewUser
 
 class UserSpec extends Specification{
 
-    UserFacade userFacade = new UserFacadeCreator().createUserFacade(new InMemoryUserRepository())
+    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder()
+    UserFacade userFacade = new UserFacadeCreator().createUserFacade(new InMemoryUserRepository(), passwordEncoder)
 
     def "user can be registered if there is no other user with such login" () {
         when: "user registers himself"
