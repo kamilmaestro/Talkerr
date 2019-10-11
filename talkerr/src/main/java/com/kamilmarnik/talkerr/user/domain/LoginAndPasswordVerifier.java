@@ -1,4 +1,4 @@
-package com.kamilmarnik.talkerr.logic;
+package com.kamilmarnik.talkerr.user.domain;
 
 import com.kamilmarnik.talkerr.user.dto.UserDto;
 import com.kamilmarnik.talkerr.user.exception.InvalidLoginException;
@@ -7,13 +7,13 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public final class LoginAndPasswordVerifier {
+final class LoginAndPasswordVerifier {
 
   private LoginAndPasswordVerifier() {
     throw new AssertionError("This class can not be instantiated!");
   }
 
-  public static void verifyRegisteredLogAndPass(String login, String password) throws InvalidLoginException, InvalidPasswordException {
+  static void verifyRegisteredLogAndPass(String login, String password) throws InvalidLoginException, InvalidPasswordException {
     if(!isCorrectRegisteredLogin(login)) {
       throw new InvalidLoginException("Incorrect registered login!");
     }

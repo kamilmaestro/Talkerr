@@ -14,7 +14,7 @@ public final class LoggedUserGetter {
     throw new AssertionError("This class can not be instantiated!");
   }
 
-  public static UserDetails getLoggedUserDetails() {
+  private static UserDetails getLoggedUserDetails() {
     SecurityContext context = SecurityContextHolder.getContext();
     UserDetails loggedUserDetails = null;
     if(context != null) {

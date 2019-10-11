@@ -1,7 +1,6 @@
 package com.kamilmarnik.talkerr.user.domain;
 
 import com.kamilmarnik.talkerr.logic.LoggedUserGetter;
-import com.kamilmarnik.talkerr.logic.LoginAndPasswordVerifier;
 import com.kamilmarnik.talkerr.user.dto.LoggedUserDto;
 import com.kamilmarnik.talkerr.user.dto.UserDto;
 import com.kamilmarnik.talkerr.user.dto.UserStatusDto;

@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Builder(toBuilder = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "users")
-public class User {
+class User {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
