@@ -3,10 +3,8 @@ package com.kamilmarnik.talkerr.post.domain
 import com.kamilmarnik.talkerr.post.exception.PostNotFoundException
 import com.kamilmarnik.talkerr.user.domain.InMemoryUserRepository
 import com.kamilmarnik.talkerr.user.domain.UserFacade
-import com.kamilmarnik.talkerr.user.domain.UserFacadeCreator
 import com.kamilmarnik.talkerr.user.domain.UserRepository
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder
+import com.kamilmarnik.talkerr.user.domain.UserSpec
 import spock.lang.Specification
 
 import static com.kamilmarnik.talkerr.post.domain.PostCreator.createNewPost
@@ -16,8 +14,7 @@ import static com.kamilmarnik.talkerr.user.domain.UserCreator.registerNewUser
 class PostSpec extends Specification {
 
     UserRepository userRepository = new InMemoryUserRepository()
-    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder()
-    UserFacade userFacade = new UserFacadeCreator().createUserFacade(userRepository, passwordEncoder)
+    UserFacade userFacade = new UserSpec().createUserFacade(userRepository)
     PostFacade postFacade = new PostFacadeCreator().createPostFacade(new InMemoryPostRepository(), userFacade)
 
     def ADMIN = createAdmin(userRepository)

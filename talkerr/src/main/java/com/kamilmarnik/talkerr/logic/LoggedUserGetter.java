@@ -1,37 +1,29 @@
 package com.kamilmarnik.talkerr.logic;
 
 import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+@NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public final class LoggedUserGetter {
+public class LoggedUserGetter {
 
-  private LoggedUserGetter() {
-    throw new AssertionError("This class can not be instantiated!");
-  }
-
-  private static UserDetails getLoggedUserDetails() {
-    SecurityContext context = SecurityContextHolder.getContext();
-    UserDetails loggedUserDetails = null;
-    if(context != null) {
-      Authentication auth = context.getAuthentication();
+  public String getLoggedUserName() {
+    SecurityContext ctx = SecurityContextHolder.getContext();
+    String userName = null;
+    if(ctx != null) {
+      Authentication auth = ctx.getAuthentication();
       if(auth != null) {
-        Object principal = auth.getPrincipal();
-        if (principal instanceof UserDetails) {
-          loggedUserDetails = (UserDetails) principal;
-        } else {
-          throw new RuntimeException("Can not get User Details");
-        }
+        userName = auth.getName();
       }
     }
-    return loggedUserDetails;
-  }
-
-  public static String getLoggedUserName() {
-    return getLoggedUserDetails().getUsername();
+    if(userName == null) {
+      throw new UsernameNotFoundException("Can not get currently logged in user!");
+    }
+    return userName;
   }
 }

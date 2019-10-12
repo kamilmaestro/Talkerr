@@ -24,6 +24,7 @@ public class UserFacade {
 
   UserRepository userRepository;
   PasswordEncoder passwordEncoder;
+  LoggedUserGetter loggedUserGetter;
 
   public UserDto registerUser(LoggedUserDto user) throws UserAlreadyExistsException, InvalidLoginException, InvalidPasswordException {
     Objects.requireNonNull(user);
@@ -39,9 +40,9 @@ public class UserFacade {
         .dto();
   }
 
-  public UserDto getLoggedUserName() {
-    return userRepository.findUserByLogin(LoggedUserGetter.getLoggedUserName())
-        .orElseThrow(() -> new UsernameNotFoundException("Can not find user"))
+  public UserDto getLoggedUser()  {
+    return userRepository.findUserByLogin(loggedUserGetter.getLoggedUserName())
+        .orElseThrow(() -> new UsernameNotFoundException("Can not find logged in user"))
         .dto();
   }
 
