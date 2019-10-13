@@ -1,6 +1,5 @@
 package com.kamilmarnik.talkerr.user.domain;
 
-import com.kamilmarnik.talkerr.user.dto.CustomUserDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +21,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     return CustomUserDetails.builder()
         .userId(user.getUserId())
-        .userName(user.getLogin())
+        .username(user.getLogin())
         .password(user.getPassword())
         .role(user.getStatus())
         .build();

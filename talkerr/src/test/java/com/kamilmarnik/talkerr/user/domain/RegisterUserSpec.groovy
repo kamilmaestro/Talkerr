@@ -12,7 +12,7 @@ class RegisterUserSpec extends UserSpec{
             def user = userFacade.registerUser(registerNewUser())
         then: "user is registered"
             def registeredUser = userFacade.getUser(user.userId)
-        and: "login is correct"
+        and: "username is correct"
             user.login == registeredUser.login
         and: "Id is correct"
             user.userId == registeredUser.userId

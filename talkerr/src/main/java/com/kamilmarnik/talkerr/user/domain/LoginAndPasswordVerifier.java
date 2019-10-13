@@ -15,7 +15,7 @@ final class LoginAndPasswordVerifier {
 
   static void verifyRegisteredLogAndPass(String login, String password) throws InvalidLoginException, InvalidPasswordException {
     if(!isCorrectRegisteredLogin(login)) {
-      throw new InvalidLoginException("Incorrect registered login!");
+      throw new InvalidLoginException("Incorrect registered username!");
     }
 
     if(!isCorrectRegisteredPassword(password)) {

@@ -4,7 +4,6 @@ import com.kamilmarnik.talkerr.post.domain.PostFacade;
 import com.kamilmarnik.talkerr.post.dto.CreatedPostDto;
 import com.kamilmarnik.talkerr.post.dto.PostDto;
 import com.kamilmarnik.talkerr.post.exception.PostNotFoundException;
-import com.kamilmarnik.talkerr.user.exception.UserNotFoundException;
 import com.kamilmarnik.talkerr.user.exception.UserRoleException;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -42,7 +41,7 @@ class PostController {
     try {
       PostDto addedPost = postFacade.addPost(post);
       return ResponseEntity.ok(addedPost);
-    } catch (UserRoleException | UserNotFoundException e) {
+    } catch (UserRoleException e) {
       log.error(e.getMessage());
       return ResponseEntity.notFound().build();
     }

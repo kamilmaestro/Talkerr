@@ -1,6 +1,6 @@
 package com.kamilmarnik.talkerr.user.domain;
 
-import com.kamilmarnik.talkerr.logic.LoggedUserGetter;
+import com.kamilmarnik.talkerr.logic.authentication.LoggedUserGetter;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -26,7 +26,7 @@ class User {
 
   @Getter
   @NotNull
-  @Column(name = "login")
+  @Column(name = "username")
   @Size(min = UserDto.MIN_LOG_LEN, max = UserDto.MAX_LOG_LEN)
   String login;
 

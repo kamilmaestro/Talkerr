@@ -1,4 +1,4 @@
-package com.kamilmarnik.talkerr.logic;
+package com.kamilmarnik.talkerr.logic.authentication;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

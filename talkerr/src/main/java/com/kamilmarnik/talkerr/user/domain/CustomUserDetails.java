@@ -1,11 +1,13 @@
-package com.kamilmarnik.talkerr.user.dto;
+package com.kamilmarnik.talkerr.user.domain;
 
+import com.kamilmarnik.talkerr.user.dto.UserStatusDto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -13,9 +15,9 @@ import java.util.Collections;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Builder
 @Getter
-public class CustomUserDetails implements org.springframework.security.core.userdetails.UserDetails {
+class CustomUserDetails implements UserDetails {
   Long userId;
-  String userName;
+  String username;
   String password;
   UserStatusDto role;
 
@@ -31,7 +33,7 @@ public class CustomUserDetails implements org.springframework.security.core.user
 
   @Override
   public String getUsername() {
-    return userName;
+    return username;
   }
 
   @Override

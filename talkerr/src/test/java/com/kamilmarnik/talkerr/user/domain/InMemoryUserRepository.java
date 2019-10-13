@@ -5,10 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemoryUserRepository implements UserRepository {
@@ -142,6 +139,8 @@ public class InMemoryUserRepository implements UserRepository {
 
   @Override
   public Optional<User> findUserByLogin(String login) {
-    return Optional.ofNullable(values.get(login));
+    return values.values().stream()
+        .filter(user -> user.getLogin().equals(login))
+        .findFirst();
   }
 }
