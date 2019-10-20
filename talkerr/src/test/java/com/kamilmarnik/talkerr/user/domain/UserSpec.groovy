@@ -1,27 +1,34 @@
 package com.kamilmarnik.talkerr.user.domain
 
-import com.kamilmarnik.talkerr.user.dto.UserStatusDto
+import com.kamilmarnik.talkerr.logic.authentication.LoggedUserGetter
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import spock.lang.Specification
 
-import static com.kamilmarnik.talkerr.user.domain.UserCreator.registerNewUser
-
 class UserSpec extends Specification{
+    UserRepository userRepository
+    PasswordEncoder passwordEncoder
+    LoggedUserGetter loggedUserGetter
 
-    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder()
-    UserFacade userFacade = new UserFacadeCreator().createUserFacade(new InMemoryUserRepository(), passwordEncoder)
-
-    def "user can be registered if there is no other user with such login" () {
-        when: "user registers himself"
-            def user = userFacade.registerUser(registerNewUser())
-        then: "user is registered"
-            def registeredUser = userFacade.getUser(user.userId)
-        and: "login is correct"
-            user.login == registeredUser.login
-        and: "Id is correct"
-            user.userId == registeredUser.userId
-        and:
-            registeredUser.status == UserStatusDto.REGISTERED
+    UserFacade createUserFacade() {
+        setup()
+        return new UserFacadeCreator().createUserFacade(userRepository, passwordEncoder, loggedUserGetter)
     }
+
+//    UserFacade createUserFacade(UserRepository userRepo) {
+//        setup(userRepo)
+//        return new UserFacadeCreator().createUserFacade(userRepository, passwordEncoder, loggedUserGetter)
+//    }
+
+    private def setup() {
+        loggedUserGetter = Mock(LoggedUserGetter.class)
+        userRepository = new InMemoryUserRepository()
+        passwordEncoder = new BCryptPasswordEncoder()
+    }
+
+//    private def setup(UserRepository userRepo) {
+//        loggedUserGetter = Mock(LoggedUserGetter.class)
+//        passwordEncoder = new BCryptPasswordEncoder()
+//        userRepository = userRepo
+//    }
 }

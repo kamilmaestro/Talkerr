@@ -6,7 +6,6 @@ import com.kamilmarnik.talkerr.post.exception.PostNotFoundException;
 import com.kamilmarnik.talkerr.user.domain.UserFacade;
 import com.kamilmarnik.talkerr.user.dto.UserDto;
 import com.kamilmarnik.talkerr.user.dto.UserStatusDto;
-import com.kamilmarnik.talkerr.user.exception.UserNotFoundException;
 import com.kamilmarnik.talkerr.user.exception.UserRoleException;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -22,12 +21,9 @@ public class PostFacade {
   PostRepository postRepository;
   UserFacade userFacade;
 
-  public PostDto addPost(CreatedPostDto post) throws UserNotFoundException, UserRoleException {
+  public PostDto addPost(CreatedPostDto post) throws UserRoleException {
     Objects.requireNonNull(post);
-    UserStatusDto userStatus = userFacade.getUser(post.getUserId()).getStatus();
-    if(!UserStatusDto.ADMIN.equals(userStatus) && !UserStatusDto.REGISTERED.equals(userStatus)) {
-      throw new UserRoleException("User with Id:" + post.getUserId() + " does not have a permission to add a new post");
-    }
+    checkIfUserCanAddPost();
 
     return postRepository.save(Post.fromDto(createPost(post))).dto();
   }
@@ -38,12 +34,19 @@ public class PostFacade {
         .dto();
   }
 
-  public void deletePost(long postId, long loggedUserId) throws UserNotFoundException, PostNotFoundException {
-    UserDto user = userFacade.getUser(loggedUserId);
+  public void deletePost(long postId) throws PostNotFoundException {
+    UserDto user = userFacade.getLoggedUser();
     PostDto post = getPost(postId);
 
-    if(post.getUserId() == loggedUserId || user.getStatus().equals(UserStatusDto.ADMIN)) {
+    if(post.getUserId() == user.getUserId() || user.getStatus().equals(UserStatusDto.ADMIN)) {
       postRepository.deleteById(postId);
+    }
+  }
+
+  private void checkIfUserCanAddPost() throws UserRoleException {
+    UserDto user = userFacade.getLoggedUser();
+    if(!UserStatusDto.ADMIN.equals(user.getStatus()) && !UserStatusDto.REGISTERED.equals(user.getStatus())) {
+      throw new UserRoleException("User with username:" + user.getLogin() + " does not have a permission to add a new post");
     }
   }
 
