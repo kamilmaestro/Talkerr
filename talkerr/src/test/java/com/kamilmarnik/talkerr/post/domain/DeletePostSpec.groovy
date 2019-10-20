@@ -36,4 +36,17 @@ class DeletePostSpec extends PostSpec {
         then: "post is deleted"
             thrown PostNotFoundException.class
     }
+
+    def "user should not be able to delete a post created by the other one" () {
+        given: "there are two users"
+            loggedUserGetter.loggedUserName >>> ["Creator", "Logged"]
+            def postCreator = userFacade.registerUser(registerNewUser("Creator"))
+            def loggedUser = userFacade.registerUser(registerNewUser("Logged"))
+        and: "post is created by the other user"
+            def post = postFacade.addPost(createNewPost(postCreator.userId))
+        when: "logged in user wants to delete post added by the other one"
+            postFacade.deletePost(post.postId)
+        then: "post is not deleted"
+            postFacade.getPost(post.postId).postId == post.postId
+    }
 }
