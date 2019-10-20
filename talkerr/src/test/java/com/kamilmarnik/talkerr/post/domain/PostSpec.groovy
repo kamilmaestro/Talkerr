@@ -6,19 +6,17 @@ import com.kamilmarnik.talkerr.user.domain.UserFacade
 import com.kamilmarnik.talkerr.user.domain.UserFacadeCreator
 import com.kamilmarnik.talkerr.user.domain.UserRepository
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder
 import spock.lang.Specification
 
 class PostSpec extends Specification{
 
     UserRepository userRepository = new InMemoryUserRepository()
     LoggedUserGetter loggedUserGetter = Mock(LoggedUserGetter.class)
-    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder()
     UserFacade userFacade = createUserFacade()
     PostFacade postFacade = createPostFacade()
 
     UserFacade createUserFacade() {
-        new UserFacadeCreator().createUserFacade(userRepository, passwordEncoder, loggedUserGetter)
+        new UserFacadeCreator().createUserFacade(userRepository, new BCryptPasswordEncoder(), loggedUserGetter)
     }
 
     PostFacade createPostFacade() {
