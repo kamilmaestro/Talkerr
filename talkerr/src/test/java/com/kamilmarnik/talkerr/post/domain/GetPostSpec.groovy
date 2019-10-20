@@ -1,9 +1,7 @@
 package com.kamilmarnik.talkerr.post.domain
 
+
 import com.kamilmarnik.talkerr.post.exception.PostNotFoundException
-import com.kamilmarnik.talkerr.user.domain.InMemoryUserRepository
-import com.kamilmarnik.talkerr.user.domain.UserFacade
-import com.kamilmarnik.talkerr.user.domain.UserRepository
 
 import static com.kamilmarnik.talkerr.post.domain.PostCreator.createNewPost
 import static com.kamilmarnik.talkerr.user.domain.UserCreator.createAdmin
@@ -11,12 +9,9 @@ import static com.kamilmarnik.talkerr.user.domain.UserCreator.registerNewUser
 
 class GetPostSpec extends PostSpec {
 
-    UserRepository userRepository = new InMemoryUserRepository()
-    UserFacade userFacade = createUserFacade(userRepository)
-    PostFacade postFacade = new PostFacadeCreator().createPostFacade(new InMemoryPostRepository(), userFacade)
-
     def "user should be able to create a new post"() {
         given: "there is an user"
+            loggedUserGetter.loggedUserName >> "DefLog"
             def user = userFacade.registerUser(registerNewUser())
         when: "user creates a new post"
             def post = postFacade.addPost(createNewPost(user.userId, "FIRST POST"))
@@ -32,6 +27,7 @@ class GetPostSpec extends PostSpec {
 
     def "user should be able to delete a post if he is its creator" () {
         given: "there is an user"
+            loggedUserGetter.loggedUserName >> "DefLog"
             def user = userFacade.registerUser(registerNewUser())
         and: "there is a post created by user"
             def post = postFacade.addPost(createNewPost(user.userId, "POST"))
@@ -45,6 +41,7 @@ class GetPostSpec extends PostSpec {
 
     def "admin should be able to delete any post" () {
         given: "there is an user and admin"
+            loggedUserGetter.loggedUserName >> "DefLog"
             def user = userFacade.registerUser(registerNewUser())
             def admin = createAdmin(userRepository)
         and: "there is a post created by user"
