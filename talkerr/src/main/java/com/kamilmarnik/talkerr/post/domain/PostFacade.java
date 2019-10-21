@@ -23,7 +23,7 @@ public class PostFacade {
 
   public PostDto addPost(CreatedPostDto post) throws UserRoleException {
     Objects.requireNonNull(post);
-    checkIfUserCanAddPost();
+    checkIfUserCanAddPost(post.getCreatorId());
 
     return postRepository.save(Post.fromDto(createPost(post))).dto();
   }
@@ -43,17 +43,25 @@ public class PostFacade {
     }
   }
 
-  private void checkIfUserCanAddPost() throws UserRoleException {
+  private void checkIfUserCanAddPost(long creatorId) throws UserRoleException {
     UserDto user = userFacade.getLoggedUser();
-    if(!UserStatusDto.ADMIN.equals(user.getStatus()) && !UserStatusDto.REGISTERED.equals(user.getStatus())) {
-      throw new UserRoleException("User with username:" + user.getLogin() + " does not have a permission to add a new post");
+    if(!isAdminOrRegistered(user.getStatus()) || !isPostCreator(user.getUserId(), creatorId)) {
+      throw new UserRoleException("User with username: " + user.getLogin() + " does not have a permission to add a new post");
     }
+  }
+
+  private boolean isAdminOrRegistered(UserStatusDto loggedUserStatus) {
+    return UserStatusDto.ADMIN.equals(loggedUserStatus) || UserStatusDto.REGISTERED.equals(loggedUserStatus);
+  }
+
+  private boolean isPostCreator(long loggedUserId, long creatorId) {
+    return loggedUserId == creatorId;
   }
 
   private PostDto createPost(CreatedPostDto post) {
     return PostDto.builder()
         .content(post.getContent())
-        .userId(post.getUserId())
+        .userId(post.getCreatorId())
         .createdOn(LocalDateTime.now())
         .build();
   }
