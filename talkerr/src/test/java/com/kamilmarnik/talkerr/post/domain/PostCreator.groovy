@@ -10,7 +10,7 @@ abstract class PostCreator {
     static CreatedPostDto createNewPost(long userId, String content) {
         return CreatedPostDto.builder()
                 .content(content)
-                .userId(userId)
+                .creatorId(userId)
                 .build()
     }
 }

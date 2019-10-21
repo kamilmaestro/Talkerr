@@ -7,14 +7,18 @@ import com.kamilmarnik.talkerr.user.dto.UserStatusDto
 import java.time.LocalDateTime
 
 abstract class UserCreator {
+
+    final static DEF_LOGIN = "DefLog"
+    final static DEF_PASSWORD = "DefPass123"
+
     static RegistrationRequest registerNewUser() {
-        registerNewUser("DefLog", "DefPass123")
+        registerNewUser(DEF_LOGIN)
     }
 
-    static RegistrationRequest registerNewUser(String login, String password) {
+    static RegistrationRequest registerNewUser(String login) {
         RegistrationRequest.builder()
             .username(login)
-            .password(password)
+            .password(DEF_PASSWORD)
             .build()
     }
 

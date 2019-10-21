@@ -46,4 +46,15 @@ class PostController {
       return ResponseEntity.notFound().build();
     }
   }
+
+  @DeleteMapping("/{postId}")
+  public ResponseEntity<?> deletePost(@PathVariable Long postId) {
+    try {
+      postFacade.deletePost(postId);
+      return ResponseEntity.ok().build();
+    } catch (PostNotFoundException e) {
+      log.error(e.getMessage());
+      return ResponseEntity.notFound().build();
+    }
+  }
 }
