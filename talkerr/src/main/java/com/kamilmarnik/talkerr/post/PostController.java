@@ -26,35 +26,23 @@ class PostController {
   }
 
   @GetMapping("/{postId}")
-  public ResponseEntity<PostDto> getPost(@PathVariable Long postId) {
-    try {
+  public ResponseEntity<PostDto> getPost(@PathVariable Long postId) throws PostNotFoundException {
       PostDto post = postFacade.getPost(postId);
+
       return ResponseEntity.ok(post);
-    } catch (PostNotFoundException e) {
-      log.error(e.getMessage());
-      return ResponseEntity.notFound().build();
-    }
   }
 
   @PostMapping("/")
-  public ResponseEntity<PostDto> addPost(@RequestBody CreatedPostDto post) {
-    try {
+  public ResponseEntity<PostDto> addPost(@RequestBody CreatedPostDto post) throws UserRoleException {
       PostDto addedPost = postFacade.addPost(post);
+
       return ResponseEntity.ok(addedPost);
-    } catch (UserRoleException e) {
-      log.error(e.getMessage());
-      return ResponseEntity.notFound().build();
-    }
   }
 
   @DeleteMapping("/{postId}")
-  public ResponseEntity<?> deletePost(@PathVariable Long postId) {
-    try {
+  public ResponseEntity<?> deletePost(@PathVariable Long postId) throws PostNotFoundException {
       postFacade.deletePost(postId);
+
       return ResponseEntity.ok().build();
-    } catch (PostNotFoundException e) {
-      log.error(e.getMessage());
-      return ResponseEntity.notFound().build();
-    }
   }
 }

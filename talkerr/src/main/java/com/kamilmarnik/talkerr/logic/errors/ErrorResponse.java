@@ -8,13 +8,13 @@ import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Getter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 class ErrorResponse {
   private static final String NO_MESSAGE_AVAILABLE = "No message available!";
 
-  @Getter
   HttpStatus status;
-  String error;
+  String errorCode;
   String message;
   String errorClassName;
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
@@ -24,7 +24,7 @@ class ErrorResponse {
     this.status = status;
     this.errorClassName = errorClassName;
     this.message = NO_MESSAGE_AVAILABLE;
-    this.error = String.valueOf(status.value());
+    this.errorCode = String.valueOf(status.value());
     this.date = LocalDateTime.now();
   }
 
@@ -32,7 +32,7 @@ class ErrorResponse {
     this.status = status;
     this.errorClassName = errorClassName;
     this.message = message;
-    this.error = String.valueOf(status.value());
+    this.errorCode = String.valueOf(status.value());
     this.date = LocalDateTime.now();
   }
 }
