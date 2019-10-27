@@ -34,4 +34,9 @@ abstract class UserCreator {
         def admin = createUserDto("Admin", UserStatusDto.ADMIN)
         userRepository.save(User.fromDto(admin)).dto()
     }
+
+    static UserDto createGuest(UserRepository userRepository) {
+        def guest = createUserDto("Guest", UserStatusDto.GUEST)
+        userRepository.save(User.fromDto(guest)).dto()
+    }
 }

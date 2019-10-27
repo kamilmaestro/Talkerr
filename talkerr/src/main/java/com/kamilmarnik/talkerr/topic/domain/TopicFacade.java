@@ -2,6 +2,7 @@ package com.kamilmarnik.talkerr.topic.domain;
 
 import com.kamilmarnik.talkerr.topic.dto.CreateTopicDto;
 import com.kamilmarnik.talkerr.topic.dto.TopicDto;
+import com.kamilmarnik.talkerr.topic.exception.InvalidTopicContentException;
 import com.kamilmarnik.talkerr.topic.exception.TopicAlreadyExistsException;
 import com.kamilmarnik.talkerr.topic.exception.TopicNotFoundException;
 import com.kamilmarnik.talkerr.user.domain.UserFacade;
@@ -22,11 +23,9 @@ public class TopicFacade {
   TopicRepository topicRepository;
   UserFacade userFacade;
 
-  public TopicDto addTopic(CreateTopicDto topic) throws UserRoleException, TopicAlreadyExistsException {
-    Objects.requireNonNull(topic);
+  public TopicDto addTopic(CreateTopicDto topic) throws UserRoleException, TopicAlreadyExistsException, InvalidTopicContentException {
     UserDto user = userFacade.getLoggedUser();
-    checkIfUserCanAddTopic(user);
-    checkIfTopicAlreadyExists(topic);
+    checkIfUserCanAddTopic(user, topic);
 
     return topicRepository.save(Topic.fromDto(createTopic(topic, user.getUserId()))).dto();
   }
@@ -37,7 +36,10 @@ public class TopicFacade {
         .dto();
   }
 
-  private void checkIfUserCanAddTopic(UserDto user) throws UserRoleException {
+  private void checkIfUserCanAddTopic(UserDto user, CreateTopicDto topic) throws UserRoleException, TopicAlreadyExistsException, InvalidTopicContentException {
+    Objects.requireNonNull(topic, "Topic can not be created due to invalid data");
+    checkIfTopicAlreadyExists(topic);
+    checkTopicContent(topic);
     if(!userFacade.isAdmin(user)) {
       throw new UserRoleException("User with username: " + user.getLogin() + "does not have a permission to add a new topic");
     }
@@ -50,9 +52,18 @@ public class TopicFacade {
     }
   }
 
+  private void checkTopicContent(CreateTopicDto topic) throws InvalidTopicContentException {
+    if(topic.getName().length() > TopicDto.MAX_NAME_LENGTH) {
+      throw new InvalidTopicContentException("Invalid length of name of topic");
+    } else if(topic.getDescription().length() > TopicDto.MAX_DESCRIPTION_LENGTH) {
+      throw new InvalidTopicContentException("Invalid length of descritpion of topic");
+    }
+  }
+
   private TopicDto createTopic(CreateTopicDto topic, long userId) {
     return TopicDto.builder()
         .name(topic.getName())
+        .description(topic.getDescription())
         .createdOn(LocalDateTime.now())
         .creatorId(userId)
         .build();

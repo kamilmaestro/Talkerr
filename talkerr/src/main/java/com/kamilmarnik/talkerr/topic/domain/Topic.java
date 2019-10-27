@@ -27,6 +27,10 @@ class Topic {
   @Column(name = "name", length = 30)
   String name;
 
+  @NotNull
+  @Column(name = "description", length = 100)
+  String description;
+
   @Column(name = "created_on", columnDefinition = "TIMESTAMP WITH TIME ZONE NOT NULL")
   LocalDateTime createdOn;
 
@@ -38,6 +42,7 @@ class Topic {
     return Topic.builder()
         .topicId(dto.getTopicId())
         .name(dto.getName())
+        .description(dto.getDescription())
         .createdOn(dto.getCreatedOn())
         .creatorId(dto.getCreatorId())
         .build();
@@ -47,6 +52,7 @@ class Topic {
     return TopicDto.builder()
         .topicId(topicId)
         .name(name)
+        .description(description)
         .createdOn(createdOn)
         .creatorId(creatorId)
         .build();
