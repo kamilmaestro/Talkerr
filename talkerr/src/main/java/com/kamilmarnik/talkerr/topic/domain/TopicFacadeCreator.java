@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @FieldDefaults(level = AccessLevel.PRIVATE)
-class TopicFacadeCreator {
+public class TopicFacadeCreator {
 
   @Autowired
   TopicRepository topicRepository;

@@ -138,4 +138,11 @@ class InMemoryTopicRepository implements TopicRepository{
   public <S extends Topic> boolean exists(Example<S> example) {
     return false;
   }
+
+  @Override
+  public Optional<Topic> findByName(String name) {
+    return values.values().stream()
+        .filter(topic -> topic.getName().equals(name))
+        .findFirst();
+  }
 }

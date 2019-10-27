@@ -28,7 +28,7 @@ public class UserFacade {
 
   public UserDto registerUser(RegistrationRequest user) throws UserAlreadyExistsException, InvalidLoginException, InvalidPasswordException {
     Objects.requireNonNull(user);
-    checkIfUserRegistered(user.getUsername());
+    checkIfUserAlreadyExists(user.getUsername());
     LoginAndPasswordVerifier.verifyRegisteredLogAndPass(user.getUsername(), user.getPassword());
 
     return userRepository.save(createUser(user)).dto();
@@ -46,7 +46,15 @@ public class UserFacade {
         .dto();
   }
 
-  private void checkIfUserRegistered(String login) throws UserAlreadyExistsException {
+  public boolean isAdmin(UserDto user) {
+    return UserStatusDto.ADMIN.equals(user.getStatus());
+  }
+
+  public boolean isRegistered(UserDto user) {
+    return UserStatusDto.REGISTERED.equals(user.getStatus());
+  }
+
+  private void checkIfUserAlreadyExists(String login) throws UserAlreadyExistsException {
     Optional<User> savedUser = userRepository.findUserByLogin(login);
     if(savedUser.isPresent()) {
       throw new UserAlreadyExistsException("Such user is already registered");

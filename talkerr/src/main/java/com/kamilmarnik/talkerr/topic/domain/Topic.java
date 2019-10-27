@@ -1,20 +1,19 @@
 package com.kamilmarnik.talkerr.topic.domain;
 
 import com.kamilmarnik.talkerr.topic.dto.TopicDto;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder(toBuilder = true)
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@Table(name = "topic")
 class Topic {
 
   @Id
@@ -24,7 +23,8 @@ class Topic {
   Long topicId;
 
   @NotNull
-  @Column(name = "name")
+  @Getter
+  @Column(name = "name", length = 30)
   String name;
 
   @Column(name = "created_on", columnDefinition = "TIMESTAMP WITH TIME ZONE NOT NULL")
