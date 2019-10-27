@@ -11,7 +11,6 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,25 +28,17 @@ class UserController {
   }
 
   @GetMapping("/{userId}")
-  public ResponseEntity<UserDto> getUser(@PathVariable Long userId) {
-    try {
+  public ResponseEntity<UserDto> getUser(@PathVariable Long userId) throws UserNotFoundException {
       UserDto user = userFacade.getUser(userId);
+
       return ResponseEntity.ok(user);
-    } catch (UserNotFoundException e) {
-      log.error(e.getMessage());
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
   }
 
   @PostMapping("/")
-  public ResponseEntity<UserDto> registerUser(@RequestBody RegistrationRequest user) {
-    try {
+  public ResponseEntity<UserDto> registerUser(@RequestBody RegistrationRequest user) throws UserAlreadyExistsException, InvalidLoginException, InvalidPasswordException {
       UserDto registeredUser = userFacade.registerUser(user);
+
       return ResponseEntity.ok(registeredUser);
-    } catch (UserAlreadyExistsException | InvalidLoginException | InvalidPasswordException e) {
-      log.error(e.getMessage());
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
   }
 
 }
