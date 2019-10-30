@@ -7,14 +7,14 @@ import com.kamilmarnik.talkerr.user.domain.InMemoryUserRepository
 import com.kamilmarnik.talkerr.user.domain.UserFacade
 import com.kamilmarnik.talkerr.user.domain.UserFacadeCreator
 import com.kamilmarnik.talkerr.user.domain.UserRepository
-import com.kamilmarnik.talkerr.user.dto.RegistrationRequest
 import com.kamilmarnik.talkerr.user.exception.UserRoleException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import spock.lang.Specification
 
-import static com.kamilmarnik.talkerr.user.domain.UserCreator.createAdmin
-import static com.kamilmarnik.talkerr.user.domain.UserCreator.createGuest
+import java.util.stream.Collectors
+
+import static com.kamilmarnik.talkerr.user.domain.UserCreator.*
 
 class TopicSpec extends Specification{
 
@@ -26,6 +26,7 @@ class TopicSpec extends Specification{
     TopicFacade topicFacade = new TopicFacadeCreator().createTopicFacade(topicRepository, userFacade)
 
     def admin = createAdmin(userRepository)
+    def user = userFacade.registerUser(registerNewUser())
 
     def "admin should be able to add a new topic" () {
         given: "there is an admin"
@@ -38,8 +39,7 @@ class TopicSpec extends Specification{
 
     def "registered user without a permission should not be able to add a new topic" () {
         given: "there is an user"
-            def user = userFacade.registerUser(RegistrationRequest.builder().username("DefLog").password("DefPass1").build())
-            loggedUserGetter.getLoggedUserName() >> "DefLog"
+            loggedUserGetter.getLoggedUserName() >> DEF_LOGIN
         when: "user wants to add a topic"
             topicFacade.addTopic(createTopic("Topic", "Description"))
         then: "he is not able to do this"
@@ -68,6 +68,32 @@ class TopicSpec extends Specification{
             longName    |   "Description"   |   InvalidTopicContentException.class
             "Name"      |   longDescription |   InvalidTopicContentException.class
             longName    |   longDescription |   InvalidTopicContentException.class
+    }
+
+    def "user wants to get a list of all topics" () {
+        given: "there are three topics created by admin"
+            loggedUserGetter.getLoggedUserName() >> "Admin"
+            def fstTopic = topicFacade.addTopic(createTopic("First", "Description"))
+            def sndTopic = topicFacade.addTopic(createTopic("Second", "Description"))
+            def trdTopic = topicFacade.addTopic(createTopic("Third", "Description"))
+        when: "user asks for list of topics"
+            def topics = topicFacade.getTopics()
+        then: "he gets list with three topics"
+            topics.size() == 3
+        and: "obtained topics are the same as those saved"
+            [fstTopic.topicId, sndTopic.topicId, trdTopic.topicId].sort() == topics.stream()
+                    .map({ topic -> topic.getTopicId()} )
+                    .collect(Collectors.toList())
+                    .sort()
+    }
+
+    def "user gets an empty list of topics if there was not any saved" () {
+        given: "there is an user"
+            loggedUserGetter.getLoggedUserName() >> DEF_LOGIN
+        when: "he wants to get a list of topics"
+            def topics = topicFacade.getTopics()
+        then: "he gets an empty list of topics"
+            topics.isEmpty()
     }
 
     private CreateTopicDto createTopic(String name, String description) {

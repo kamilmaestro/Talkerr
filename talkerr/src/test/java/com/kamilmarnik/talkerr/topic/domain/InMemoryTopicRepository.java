@@ -5,18 +5,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 class InMemoryTopicRepository implements TopicRepository{
-  Map<Long, Topic> values = new ConcurrentHashMap<>();
+  private Map<Long, Topic> values = new ConcurrentHashMap<>();
 
   @Override
   public List<Topic> findAll() {
-    return null;
+    return new ArrayList<>(values.values());
   }
 
   @Override

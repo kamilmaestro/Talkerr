@@ -13,8 +13,10 @@ import lombok.Builder;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -34,6 +36,12 @@ public class TopicFacade {
     return topicRepository.findById(topicId)
         .orElseThrow(() -> new TopicNotFoundException("Can not find topic with id: " + topicId))
         .dto();
+  }
+
+  public List<TopicDto> getTopics() {
+    return topicRepository.findAll().stream()
+        .map(Topic::dto)
+        .collect(Collectors.toList());
   }
 
   private void checkIfUserCanAddTopic(UserDto user, CreateTopicDto topic) throws UserRoleException, TopicAlreadyExistsException, InvalidTopicContentException {
@@ -56,7 +64,7 @@ public class TopicFacade {
     if(topic.getName().length() > TopicDto.MAX_NAME_LENGTH) {
       throw new InvalidTopicContentException("Invalid length of name of topic");
     } else if(topic.getDescription().length() > TopicDto.MAX_DESCRIPTION_LENGTH) {
-      throw new InvalidTopicContentException("Invalid length of descritpion of topic");
+      throw new InvalidTopicContentException("Invalid length of description of topic");
     }
   }
 

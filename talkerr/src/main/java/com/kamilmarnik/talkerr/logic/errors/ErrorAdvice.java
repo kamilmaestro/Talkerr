@@ -2,6 +2,9 @@ package com.kamilmarnik.talkerr.logic.errors;
 
 import com.kamilmarnik.talkerr.post.exception.PostAlreadyExists;
 import com.kamilmarnik.talkerr.post.exception.PostNotFoundException;
+import com.kamilmarnik.talkerr.topic.exception.InvalidTopicContentException;
+import com.kamilmarnik.talkerr.topic.exception.TopicAlreadyExistsException;
+import com.kamilmarnik.talkerr.topic.exception.TopicNotFoundException;
 import com.kamilmarnik.talkerr.user.exception.InvalidLoginException;
 import com.kamilmarnik.talkerr.user.exception.InvalidPasswordException;
 import com.kamilmarnik.talkerr.user.exception.LoggedUserNotFoundException;
@@ -54,6 +57,21 @@ class ErrorAdvice {
   @ExceptionHandler(UserRoleException.class)
   public ResponseEntity<ErrorResponse> handleException(UserRoleException e) {
     return error(HttpStatus.UNAUTHORIZED, e);
+  }
+
+  @ExceptionHandler(TopicNotFoundException.class)
+  public ResponseEntity<ErrorResponse> handleException(TopicNotFoundException e) {
+    return error(HttpStatus.NOT_FOUND, e);
+  }
+
+  @ExceptionHandler(TopicAlreadyExistsException.class)
+  public ResponseEntity<ErrorResponse> handleException(TopicAlreadyExistsException e) {
+    return error(HttpStatus.BAD_REQUEST, e);
+  }
+
+  @ExceptionHandler(InvalidTopicContentException.class)
+  public ResponseEntity<ErrorResponse> handleException(InvalidTopicContentException e) {
+    return error(HttpStatus.BAD_REQUEST, e);
   }
 
   private ResponseEntity<ErrorResponse> error(HttpStatus status, Exception e) {
