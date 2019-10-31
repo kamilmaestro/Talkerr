@@ -30,7 +30,7 @@ public class TopicController {
   }
 
   @GetMapping("/{topicId}")
-  ResponseEntity<TopicDto> getPost(@PathVariable Long topicId) throws TopicNotFoundException {
+  ResponseEntity<TopicDto> getTopic(@PathVariable Long topicId) throws TopicNotFoundException {
     TopicDto topic = topicFacade.getTopic(topicId);
 
     return ResponseEntity.ok(topic);
