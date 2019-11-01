@@ -34,6 +34,7 @@ class Post {
   @Column(name = "author_id")
   Long authorId;
 
+  @Getter
   @NotNull
   @Column(name = "topic_id")
   Long topicId;

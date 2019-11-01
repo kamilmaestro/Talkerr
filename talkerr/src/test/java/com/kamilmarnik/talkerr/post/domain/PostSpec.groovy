@@ -7,6 +7,7 @@ import com.kamilmarnik.talkerr.user.domain.InMemoryUserRepository
 import com.kamilmarnik.talkerr.user.domain.UserFacade
 import com.kamilmarnik.talkerr.user.domain.UserFacadeCreator
 import com.kamilmarnik.talkerr.user.domain.UserRepository
+import org.springframework.data.domain.PageRequest
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import spock.lang.Specification
 
@@ -20,6 +21,7 @@ class PostSpec extends Specification{
     TopicFacade topicFacade = Mock(TopicFacade.class)
     PostFacade postFacade = createPostFacade()
     long topicId = 111L
+    def PAGEABLE = PageRequest.of(0, 20)
 
     UserFacade createUserFacade() {
         new UserFacadeCreator().createUserFacade(userRepository, new BCryptPasswordEncoder(), loggedUserGetter)

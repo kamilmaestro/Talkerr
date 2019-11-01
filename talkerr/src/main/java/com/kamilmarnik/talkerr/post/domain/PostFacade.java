@@ -12,6 +12,8 @@ import com.kamilmarnik.talkerr.user.exception.UserRoleException;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -44,6 +46,10 @@ public class PostFacade {
     if(post.getAuthorId() == user.getUserId() || user.getStatus().equals(UserStatusDto.ADMIN)) {
       postRepository.deleteById(postId);
     }
+  }
+
+  public Page<PostDto> getPostsByTopicId(Pageable pageable, long topicId) {
+    return postRepository.findAllByTopicId(pageable, topicId).map(Post::dto);
   }
 
   private void checkIfUserCanAddPost(UserDto user, CreatedPostDto post) throws UserRoleException, TopicNotFoundException {
