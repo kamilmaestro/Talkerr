@@ -49,7 +49,7 @@ public class TopicFacade {
     checkIfTopicAlreadyExists(topic);
     checkTopicContent(topic);
     if(!userFacade.isAdmin(user)) {
-      throw new UserRoleException("User with username: " + user.getLogin() + "does not have a permission to add a new topic");
+      throw new UserRoleException("User with username: " + user.getLogin() + " does not have a permission to add a new topic");
     }
   }
 

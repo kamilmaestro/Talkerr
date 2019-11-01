@@ -4,6 +4,7 @@ import com.kamilmarnik.talkerr.post.domain.PostFacade;
 import com.kamilmarnik.talkerr.post.dto.CreatedPostDto;
 import com.kamilmarnik.talkerr.post.dto.PostDto;
 import com.kamilmarnik.talkerr.post.exception.PostNotFoundException;
+import com.kamilmarnik.talkerr.topic.exception.TopicNotFoundException;
 import com.kamilmarnik.talkerr.user.exception.UserRoleException;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -33,7 +34,7 @@ class PostController {
   }
 
   @PostMapping("/")
-  public ResponseEntity<PostDto> addPost(@RequestBody CreatedPostDto post) throws UserRoleException {
+  public ResponseEntity<PostDto> addPost(@RequestBody CreatedPostDto post) throws UserRoleException, TopicNotFoundException {
       PostDto addedPost = postFacade.addPost(post);
 
       return ResponseEntity.ok(addedPost);

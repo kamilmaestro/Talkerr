@@ -10,5 +10,5 @@ import lombok.experimental.FieldDefaults;
 @Getter
 public class CreatedPostDto {
   String content;
-  //long topicId;
+  long topicId;
 }

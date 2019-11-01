@@ -15,5 +15,5 @@ public class PostDto {
   String content;
   LocalDateTime createdOn;
   long authorId;
-  //long topicId;
+  long topicId;
 }

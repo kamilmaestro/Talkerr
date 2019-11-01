@@ -34,12 +34,17 @@ class Post {
   @Column(name = "author_id")
   Long authorId;
 
+  @NotNull
+  @Column(name = "topic_id")
+  Long topicId;
+
   static Post fromDto(PostDto dto) {
     return Post.builder()
         .postId(dto.getPostId())
         .content(dto.getContent())
         .createdOn(dto.getCreatedOn())
         .authorId(dto.getAuthorId())
+        .topicId(dto.getTopicId())
         .build();
   }
 
@@ -49,6 +54,7 @@ class Post {
         .content(content)
         .createdOn(createdOn)
         .authorId(authorId)
+        .topicId(topicId)
         .build();
   }
 }

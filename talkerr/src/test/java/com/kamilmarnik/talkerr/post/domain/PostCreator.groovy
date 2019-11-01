@@ -3,13 +3,14 @@ package com.kamilmarnik.talkerr.post.domain
 import com.kamilmarnik.talkerr.post.dto.CreatedPostDto
 
 abstract class PostCreator {
-    static CreatedPostDto createNewPost() {
-        return createNewPost("DEFAULT CONTENT")
+    static CreatedPostDto createNewPost(long topicId) {
+        return createNewPost("DEFAULT CONTENT", topicId)
     }
 
-    static CreatedPostDto createNewPost(String content) {
+    static CreatedPostDto createNewPost(String content, long topicId) {
         return CreatedPostDto.builder()
                 .content(content)
+                .topicId(topicId)
                 .build()
     }
 }
