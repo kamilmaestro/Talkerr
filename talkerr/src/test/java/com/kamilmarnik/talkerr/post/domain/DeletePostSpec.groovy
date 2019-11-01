@@ -13,7 +13,7 @@ class DeletePostSpec extends PostSpec {
             loggedUserGetter.loggedUserName >> "DefLog"
             def user = userFacade.registerUser(registerNewUser())
         and: "there is a post created by user"
-            def post = postFacade.addPost(createNewPost(user.userId, "POST"))
+            def post = postFacade.addPost(createNewPost())
         when: "user deletes the post"
             postFacade.deletePost(post.postId)
         and: "checks deleted post"
@@ -24,11 +24,11 @@ class DeletePostSpec extends PostSpec {
 
     def "admin should be able to delete any post" () {
         given: "there is an user and admin"
-            loggedUserGetter.loggedUserName >> "DefLog"
+            loggedUserGetter.loggedUserName >>> ["DefLog", "Admin"]
             def user = userFacade.registerUser(registerNewUser())
             def admin = createAdmin(userRepository)
         and: "there is a post created by user"
-            def post = postFacade.addPost(createNewPost(user.userId, "POST"))
+            def post = postFacade.addPost(createNewPost())
         when: "admin deletes the post created by other user"
             postFacade.deletePost(post.postId)
         and: "checks deleted post"
@@ -43,7 +43,7 @@ class DeletePostSpec extends PostSpec {
             def postCreator = userFacade.registerUser(registerNewUser("Creator"))
             def loggedUser = userFacade.registerUser(registerNewUser("Logged"))
         and: "post is created by the other user"
-            def post = postFacade.addPost(createNewPost(postCreator.userId))
+            def post = postFacade.addPost(createNewPost())
         when: "logged in user wants to delete post added by the other one"
             postFacade.deletePost(post.postId)
         then: "post is not deleted"

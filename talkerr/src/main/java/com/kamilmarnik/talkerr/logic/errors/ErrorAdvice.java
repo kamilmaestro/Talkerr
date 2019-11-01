@@ -1,6 +1,5 @@
 package com.kamilmarnik.talkerr.logic.errors;
 
-import com.kamilmarnik.talkerr.post.exception.PostAlreadyExists;
 import com.kamilmarnik.talkerr.post.exception.PostNotFoundException;
 import com.kamilmarnik.talkerr.topic.exception.InvalidTopicContentException;
 import com.kamilmarnik.talkerr.topic.exception.TopicAlreadyExistsException;
@@ -18,11 +17,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 class ErrorAdvice {
-
-  @ExceptionHandler(PostAlreadyExists.class)
-  public ResponseEntity<ErrorResponse> handleException(PostAlreadyExists e) {
-    return error(HttpStatus.BAD_REQUEST, e);
-  }
 
   @ExceptionHandler(PostNotFoundException.class)
   public ResponseEntity<ErrorResponse> handleException(PostNotFoundException e) {

@@ -31,15 +31,15 @@ class Post {
   LocalDateTime createdOn;
 
   @NotNull
-  @Column(name = "user_id")
-  Long userId;
+  @Column(name = "author_id")
+  Long authorId;
 
   static Post fromDto(PostDto dto) {
     return Post.builder()
         .postId(dto.getPostId())
         .content(dto.getContent())
         .createdOn(dto.getCreatedOn())
-        .userId(dto.getUserId())
+        .authorId(dto.getAuthorId())
         .build();
   }
 
@@ -48,7 +48,7 @@ class Post {
         .postId(postId)
         .content(content)
         .createdOn(createdOn)
-        .userId(userId)
+        .authorId(authorId)
         .build();
   }
 }

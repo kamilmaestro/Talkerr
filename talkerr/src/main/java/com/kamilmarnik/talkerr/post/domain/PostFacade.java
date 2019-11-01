@@ -22,10 +22,10 @@ public class PostFacade {
   UserFacade userFacade;
 
   public PostDto addPost(CreatedPostDto post) throws UserRoleException {
-    Objects.requireNonNull(post);
-    checkIfUserCanAddPost(post.getCreatorId());
+    UserDto user = userFacade.getLoggedUser();
+    checkIfUserCanAddPost(user, post);
 
-    return postRepository.save(Post.fromDto(createPost(post))).dto();
+    return postRepository.save(Post.fromDto(createPost(post, user.getUserId()))).dto();
   }
 
   public PostDto getPost(long postId) throws PostNotFoundException {
@@ -38,26 +38,22 @@ public class PostFacade {
     UserDto user = userFacade.getLoggedUser();
     PostDto post = getPost(postId);
 
-    if(post.getUserId() == user.getUserId() || user.getStatus().equals(UserStatusDto.ADMIN)) {
+    if(post.getAuthorId() == user.getUserId() || user.getStatus().equals(UserStatusDto.ADMIN)) {
       postRepository.deleteById(postId);
     }
   }
 
-  private void checkIfUserCanAddPost(long creatorId) throws UserRoleException {
-    UserDto user = userFacade.getLoggedUser();
-    if((!userFacade.isAdmin(user) && !userFacade.isRegistered(user)) || !isPostCreator(user.getUserId(), creatorId)) {
+  private void checkIfUserCanAddPost(UserDto user, CreatedPostDto post) throws UserRoleException {
+    Objects.requireNonNull(post, "Post can not be created due to invalid data");
+    if((!userFacade.isAdmin(user) && !userFacade.isRegistered(user))) {
       throw new UserRoleException("User with username: " + user.getLogin() + " does not have a permission to add a new post");
     }
   }
 
-  private boolean isPostCreator(long loggedUserId, long creatorId) {
-    return loggedUserId == creatorId;
-  }
-
-  private PostDto createPost(CreatedPostDto post) {
+  private PostDto createPost(CreatedPostDto post, long authorId) {
     return PostDto.builder()
         .content(post.getContent())
-        .userId(post.getCreatorId())
+        .authorId(authorId)
         .createdOn(LocalDateTime.now())
         .build();
   }

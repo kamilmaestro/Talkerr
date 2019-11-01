@@ -11,14 +11,14 @@ class AddPostSpec extends PostSpec {
             loggedUserGetter.loggedUserName >> "DefLog"
             def user = userFacade.registerUser(registerNewUser())
         when: "user creates a new post"
-            def post = postFacade.addPost(createNewPost(user.userId, "FIRST POST"))
-            def sndPost = postFacade.addPost(createNewPost(user.userId, "SECOND POST"))
+            def post = postFacade.addPost(createNewPost("FIRST POST"))
+            def sndPost = postFacade.addPost(createNewPost("SECOND POST"))
         then: "post is created"
             def createdPost = postFacade.getPost(post.postId)
         and: "post was created correctly"
             createdPost.postId == post.postId
-        and: "post was created by user"
-            createdPost.userId == user.userId
+        and: "post was created by logged user"
+            createdPost.authorId == user.userId
 
     }
 }

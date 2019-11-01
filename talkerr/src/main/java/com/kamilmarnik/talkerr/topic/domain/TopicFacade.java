@@ -68,12 +68,12 @@ public class TopicFacade {
     }
   }
 
-  private TopicDto createTopic(CreateTopicDto topic, long userId) {
+  private TopicDto createTopic(CreateTopicDto topic, long authorId) {
     return TopicDto.builder()
         .name(topic.getName())
         .description(topic.getDescription())
         .createdOn(LocalDateTime.now())
-        .creatorId(userId)
+        .authorId(authorId)
         .build();
   }
 }

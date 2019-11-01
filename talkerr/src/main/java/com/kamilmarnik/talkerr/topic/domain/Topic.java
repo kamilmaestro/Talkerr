@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "topic")
+@Table(name = "topics")
 class Topic {
 
   @Id
@@ -35,8 +35,8 @@ class Topic {
   LocalDateTime createdOn;
 
   @NotNull
-  @Column(name = "creator_id")
-  Long creatorId;
+  @Column(name = "author_id")
+  Long authorId;
 
   static Topic fromDto(TopicDto dto) {
     return Topic.builder()
@@ -44,7 +44,7 @@ class Topic {
         .name(dto.getName())
         .description(dto.getDescription())
         .createdOn(dto.getCreatedOn())
-        .creatorId(dto.getCreatorId())
+        .authorId(dto.getAuthorId())
         .build();
   }
 
@@ -54,7 +54,7 @@ class Topic {
         .name(name)
         .description(description)
         .createdOn(createdOn)
-        .creatorId(creatorId)
+        .authorId(authorId)
         .build();
   }
 }
