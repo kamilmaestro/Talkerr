@@ -10,6 +10,8 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,5 +47,12 @@ class PostController {
       postFacade.deletePost(postId);
 
       return ResponseEntity.ok().build();
+  }
+
+  @GetMapping("/topic/{topicId}")
+  public ResponseEntity<Page<PostDto>> getPostsByTopicId(@PathVariable long topicId, Pageable pageable) throws TopicNotFoundException {
+    Page<PostDto> posts = postFacade.getPostsByTopicId(pageable, topicId);
+
+    return ResponseEntity.ok(posts);
   }
 }

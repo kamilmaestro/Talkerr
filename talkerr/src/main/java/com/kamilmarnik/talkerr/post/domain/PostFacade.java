@@ -48,7 +48,9 @@ public class PostFacade {
     }
   }
 
-  public Page<PostDto> getPostsByTopicId(Pageable pageable, long topicId) {
+  public Page<PostDto> getPostsByTopicId(Pageable pageable, long topicId) throws TopicNotFoundException {
+    Objects.requireNonNull(pageable);
+    checkIfTopicExists(topicId);
     return postRepository.findAllByTopicId(pageable, topicId).map(Post::dto);
   }
 
