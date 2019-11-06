@@ -1,5 +1,7 @@
 package com.kamilmarnik.talkerr.user;
 
+import com.kamilmarnik.talkerr.logic.Constants;
+import com.kamilmarnik.talkerr.mail.MailSender;
 import com.kamilmarnik.talkerr.user.domain.UserFacade;
 import com.kamilmarnik.talkerr.user.dto.RegistrationRequest;
 import com.kamilmarnik.talkerr.user.dto.UserDto;
@@ -37,7 +39,12 @@ class UserController {
   @PostMapping("/")
   public ResponseEntity<UserDto> registerUser(@RequestBody RegistrationRequest user) throws UserAlreadyExistsException, InvalidLoginException, InvalidPasswordException {
       UserDto registeredUser = userFacade.registerUser(user);
-
+      MailSender mailSender = MailSender.builder()
+          .userMail(Constants.TALKERR_MAIL)
+          .password(Constants.TALKERR_MAIL_PASSWORD)
+          .userName(user.getUsername())
+          .build();
+      mailSender.sendMail(user.getEmail());
       return ResponseEntity.ok(registeredUser);
   }
 
