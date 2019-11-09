@@ -10,6 +10,6 @@ public  final class Constants {
   }
 
   public static final String TALKERR_MAIL = "talkerrforum@gmail.com";
-  public static final String TALKERR_MAIL_PASSWORD = "talkerrForum1";
+  public static final String TALKERR_MAIL_PASSWORD = "";
 
 }
