@@ -45,13 +45,9 @@ public class PostFacade {
 
   private void checkIfUserCanAddPost(long creatorId) throws UserRoleException {
     UserDto user = userFacade.getLoggedUser();
-    if(!isAdminOrRegistered(user.getStatus()) || !isPostCreator(user.getUserId(), creatorId)) {
+    if((!userFacade.isAdmin(user) && !userFacade.isRegistered(user)) || !isPostCreator(user.getUserId(), creatorId)) {
       throw new UserRoleException("User with username: " + user.getLogin() + " does not have a permission to add a new post");
     }
-  }
-
-  private boolean isAdminOrRegistered(UserStatusDto loggedUserStatus) {
-    return UserStatusDto.ADMIN.equals(loggedUserStatus) || UserStatusDto.REGISTERED.equals(loggedUserStatus);
   }
 
   private boolean isPostCreator(long loggedUserId, long creatorId) {
