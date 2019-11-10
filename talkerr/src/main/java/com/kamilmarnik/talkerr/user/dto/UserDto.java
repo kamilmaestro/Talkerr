@@ -20,6 +20,7 @@ public class UserDto {
   String login;
   UserStatusDto status;
   LocalDateTime registeredOn;
+  String email;
 
   public boolean exists() {
     return userId != null && login != null && status != null && registeredOn != null;

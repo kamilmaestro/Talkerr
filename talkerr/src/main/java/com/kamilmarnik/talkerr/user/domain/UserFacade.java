@@ -67,6 +67,7 @@ public class UserFacade {
         .password(passwordEncoder.encode(user.getPassword()))
         .status(UserStatusDto.REGISTERED)
         .registeredOn(LocalDateTime.now())
+        .email(user.getEmail())
         .build();
   }
 }
