@@ -18,5 +18,5 @@ public class TopicDto {
   String name;
   String description;
   LocalDateTime createdOn;
-  long creatorId;
+  long authorId;
 }

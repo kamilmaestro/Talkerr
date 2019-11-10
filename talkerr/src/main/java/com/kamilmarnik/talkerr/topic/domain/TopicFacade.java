@@ -49,7 +49,7 @@ public class TopicFacade {
     checkIfTopicAlreadyExists(topic);
     checkTopicContent(topic);
     if(!userFacade.isAdmin(user)) {
-      throw new UserRoleException("User with username: " + user.getLogin() + "does not have a permission to add a new topic");
+      throw new UserRoleException("User with username: " + user.getLogin() + " does not have a permission to add a new topic");
     }
   }
 
@@ -68,12 +68,12 @@ public class TopicFacade {
     }
   }
 
-  private TopicDto createTopic(CreateTopicDto topic, long userId) {
+  private TopicDto createTopic(CreateTopicDto topic, long authorId) {
     return TopicDto.builder()
         .name(topic.getName())
         .description(topic.getDescription())
         .createdOn(LocalDateTime.now())
-        .creatorId(userId)
+        .authorId(authorId)
         .build();
   }
 }

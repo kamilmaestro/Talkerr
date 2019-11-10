@@ -8,7 +8,7 @@ import org.springframework.data.domain.Sort;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-class InMemoryTopicRepository implements TopicRepository{
+public class InMemoryTopicRepository implements TopicRepository{
   private Map<Long, Topic> values = new ConcurrentHashMap<>();
 
   @Override

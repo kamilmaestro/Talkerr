@@ -17,7 +17,7 @@ public class TopicFacadeCreator {
   @Autowired
   UserFacade userFacade;
 
-  TopicFacade createTopicFacade(TopicRepository topicRepository, UserFacade userFacade) {
+  public TopicFacade createTopicFacade(TopicRepository topicRepository, UserFacade userFacade) {
     return TopicFacade.builder()
         .topicRepository(topicRepository)
         .userFacade(userFacade)
@@ -25,7 +25,7 @@ public class TopicFacadeCreator {
   }
 
   @Bean
-  TopicFacade createTopicFacade() {
+  public TopicFacade createTopicFacade() {
     return createTopicFacade(topicRepository, userFacade);
   }
 }

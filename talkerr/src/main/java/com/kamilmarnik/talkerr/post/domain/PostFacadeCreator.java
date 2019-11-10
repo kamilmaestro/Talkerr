@@ -1,5 +1,6 @@
 package com.kamilmarnik.talkerr.post.domain;
 
+import com.kamilmarnik.talkerr.topic.domain.TopicFacade;
 import com.kamilmarnik.talkerr.user.domain.UserFacade;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -17,15 +18,19 @@ class PostFacadeCreator {
   @Autowired
   UserFacade userFacade;
 
-  PostFacade createPostFacade(PostRepository postRepository, UserFacade userFacade) {
+  @Autowired
+  TopicFacade topicFacade;
+
+  PostFacade createPostFacade(PostRepository postRepository, UserFacade userFacade, TopicFacade topicFacade) {
     return PostFacade.builder()
         .postRepository(postRepository)
         .userFacade(userFacade)
+        .topicFacade(topicFacade)
         .build();
   }
 
   @Bean
   PostFacade createPostFacade() {
-    return createPostFacade(postRepository, userFacade);
+    return createPostFacade(postRepository, userFacade, topicFacade);
   }
 }

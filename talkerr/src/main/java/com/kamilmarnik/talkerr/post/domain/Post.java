@@ -31,15 +31,21 @@ class Post {
   LocalDateTime createdOn;
 
   @NotNull
-  @Column(name = "user_id")
-  Long userId;
+  @Column(name = "author_id")
+  Long authorId;
+
+  @Getter
+  @NotNull
+  @Column(name = "topic_id")
+  Long topicId;
 
   static Post fromDto(PostDto dto) {
     return Post.builder()
         .postId(dto.getPostId())
         .content(dto.getContent())
         .createdOn(dto.getCreatedOn())
-        .userId(dto.getUserId())
+        .authorId(dto.getAuthorId())
+        .topicId(dto.getTopicId())
         .build();
   }
 
@@ -48,7 +54,8 @@ class Post {
         .postId(postId)
         .content(content)
         .createdOn(createdOn)
-        .userId(userId)
+        .authorId(authorId)
+        .topicId(topicId)
         .build();
   }
 }
