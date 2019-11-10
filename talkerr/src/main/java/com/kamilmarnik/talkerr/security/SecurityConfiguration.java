@@ -46,8 +46,9 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         .authorizeRequests()
         .anyRequest().authenticated()
         .and()
-        .formLogin().permitAll()
+        .httpBasic()
         .and()
+        .sessionManagement().disable()
         .csrf().disable();
   }
 }
