@@ -1,6 +1,6 @@
 package com.kamilmarnik.talkerr.post.domain;
 
-import com.kamilmarnik.talkerr.post.dto.CreatedPostDto;
+import com.kamilmarnik.talkerr.post.dto.CreatePostDto;
 import com.kamilmarnik.talkerr.post.dto.PostDto;
 import com.kamilmarnik.talkerr.post.exception.PostNotFoundException;
 import com.kamilmarnik.talkerr.topic.domain.TopicFacade;
@@ -26,7 +26,7 @@ public class PostFacade {
   UserFacade userFacade;
   TopicFacade topicFacade;
 
-  public PostDto addPost(CreatedPostDto post) throws UserRoleException, TopicNotFoundException {
+  public PostDto addPost(CreatePostDto post) throws UserRoleException, TopicNotFoundException {
     UserDto user = userFacade.getLoggedUser();
     checkIfUserCanAddPost(user, post);
 
@@ -54,7 +54,7 @@ public class PostFacade {
     return postRepository.findAllByTopicId(pageable, topicId).map(Post::dto);
   }
 
-  private void checkIfUserCanAddPost(UserDto user, CreatedPostDto post) throws UserRoleException, TopicNotFoundException {
+  private void checkIfUserCanAddPost(UserDto user, CreatePostDto post) throws UserRoleException, TopicNotFoundException {
     Objects.requireNonNull(post, "Post can not be created due to invalid data");
     checkIfTopicExists(post.getTopicId());
     if((!userFacade.isAdmin(user) && !userFacade.isRegistered(user))) {
@@ -66,7 +66,7 @@ public class PostFacade {
     topicFacade.getTopic(topicId);
   }
 
-  private PostDto createPost(CreatedPostDto post, long authorId) {
+  private PostDto createPost(CreatePostDto post, long authorId) {
     return PostDto.builder()
         .content(post.getContent())
         .createdOn(LocalDateTime.now())

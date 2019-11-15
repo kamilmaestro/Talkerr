@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Getter
-public class CreatedPostDto {
+public class CreatePostDto {
   String content;
   long topicId;
 }
