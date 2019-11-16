@@ -31,7 +31,7 @@ class AddCommentSpec extends CommentSpec {
 
     def "user can not add a comment to other post which does not exist" () {
         given: "there is a post"
-            postFacade.addPost(PostCreator.createNewPost(fstPostId)) >> getPost(user.getUserId(), fstPostId)
+            postFacade.addPost(PostCreator.createNewPost(topicId)) >> getPost(user.getUserId(), fstPostId)
             postFacade.getPost(fstPostId) >> getPost(user.getUserId(), fstPostId)
         and: "there is a post which has not been created properly and it does not exist"
             postFacade.getPost(sndPostId) >> {throw new PostNotFoundException()}

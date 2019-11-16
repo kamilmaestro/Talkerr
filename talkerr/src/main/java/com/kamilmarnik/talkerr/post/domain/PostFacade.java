@@ -57,7 +57,7 @@ public class PostFacade {
   private void checkIfUserCanAddPost(UserDto user, CreatePostDto post) throws UserRoleException, TopicNotFoundException {
     Objects.requireNonNull(post, "Post can not be created due to invalid data");
     checkIfTopicExists(post.getTopicId());
-    if((!userFacade.isAdmin(user) && !userFacade.isRegistered(user))) {
+    if(!userFacade.isAdminOrRegistered(user)) {
       throw new UserRoleException("User with username: " + user.getLogin() + " does not have a permission to add a new post");
     }
   }

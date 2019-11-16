@@ -37,12 +37,24 @@ public class CommentFacade {
     return commentRepository.save(Comment.fromDto(createComment(comment, loggedUser.getUserId()))).dto();
   }
 
+  public void deleteComment(long commentId) throws CommentNotFoundException {
+    UserDto loggedUser = userFacade.getLoggedUser();
+    if(canUserDeleteComment(commentId, loggedUser)) {
+      commentRepository.deleteById(commentId);
+    }
+  }
+
   private void checkIfUserCanAddComment(CreateCommentDto comment, UserDto user) throws PostNotFoundException, UserRoleException {
     Objects.requireNonNull(comment, "Comment can not be created due to invalid data");
     checkIfPostExists(comment.getPostId());
     if(user.getStatus() != UserStatusDto.REGISTERED && user.getStatus() != UserStatusDto.ADMIN) {
       throw new UserRoleException("User with username: " + user.getLogin() + " does not have a permission to add a new comment");
     }
+  }
+
+  private boolean canUserDeleteComment(long commentId, UserDto user) throws CommentNotFoundException {
+    CommentDto comment = getComment(commentId);
+    return user.getUserId() == comment.getAuthorId() && userFacade.isAdminOrRegistered(user);
   }
 
   private void checkIfPostExists(long postId) throws PostNotFoundException {
