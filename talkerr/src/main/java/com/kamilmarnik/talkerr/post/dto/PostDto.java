@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
 
@@ -16,4 +17,8 @@ public class PostDto {
   LocalDateTime createdOn;
   long authorId;
   long topicId;
+
+  public boolean exists() {
+    return postId != null && StringUtils.isNotBlank(content) && createdOn != null;
+  }
 }

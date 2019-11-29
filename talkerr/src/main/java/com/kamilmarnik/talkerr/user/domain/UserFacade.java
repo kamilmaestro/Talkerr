@@ -46,11 +46,15 @@ public class UserFacade {
         .dto();
   }
 
+  public boolean isAdminOrRegistered(UserDto user) {
+    return isAdmin(user) || isRegistered(user);
+  }
+
   public boolean isAdmin(UserDto user) {
     return UserStatusDto.ADMIN.equals(user.getStatus());
   }
 
-  public boolean isRegistered(UserDto user) {
+  private boolean isRegistered(UserDto user) {
     return UserStatusDto.REGISTERED.equals(user.getStatus());
   }
 
