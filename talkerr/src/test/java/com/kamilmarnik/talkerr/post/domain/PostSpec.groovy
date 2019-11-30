@@ -1,7 +1,6 @@
 package com.kamilmarnik.talkerr.post.domain
 
 import com.kamilmarnik.talkerr.logic.authentication.LoggedUserGetter
-import com.kamilmarnik.talkerr.topic.domain.TopicFacade
 import com.kamilmarnik.talkerr.topic.dto.TopicDto
 import com.kamilmarnik.talkerr.user.domain.InMemoryUserRepository
 import com.kamilmarnik.talkerr.user.domain.UserFacade
@@ -18,9 +17,12 @@ class PostSpec extends Specification{
     UserRepository userRepository = new InMemoryUserRepository()
     LoggedUserGetter loggedUserGetter = Mock(LoggedUserGetter.class)
     UserFacade userFacade = createUserFacade()
-    TopicFacade topicFacade = Mock(TopicFacade.class)
     PostFacade postFacade = createPostFacade()
-    long topicId = 111L
+    long userId = 11L
+    long fstTopicId = 111L
+    long sndTopicId = 112L
+    long fstPostId = 1111L
+    long sndPostId = 1112L
     def PAGEABLE = PageRequest.of(0, 20)
 
     UserFacade createUserFacade() {
@@ -28,12 +30,12 @@ class PostSpec extends Specification{
     }
 
     PostFacade createPostFacade() {
-        new PostFacadeCreator().createPostFacade(new InMemoryPostRepository(), userFacade, topicFacade)
+        new PostFacadeCreator().createPostFacade(new InMemoryPostRepository(), userFacade)
     }
 
     TopicDto getTopic(long authorId) {
         TopicDto.builder()
-                .topicId(topicId)
+                .topicId(fstTopicId)
                 .name("Topic name")
                 .description("Topic description")
                 .createdOn(LocalDateTime.now())

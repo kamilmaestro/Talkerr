@@ -1,11 +1,9 @@
 package com.kamilmarnik.talkerr.post;
 
 import com.kamilmarnik.talkerr.post.domain.PostFacade;
-import com.kamilmarnik.talkerr.post.dto.CreatePostDto;
 import com.kamilmarnik.talkerr.post.dto.PostDto;
 import com.kamilmarnik.talkerr.post.exception.PostNotFoundException;
 import com.kamilmarnik.talkerr.topic.exception.TopicNotFoundException;
-import com.kamilmarnik.talkerr.user.exception.UserRoleException;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -35,12 +33,12 @@ class PostController {
       return ResponseEntity.ok(post);
   }
 
-  @PostMapping("/")
-  public ResponseEntity<PostDto> addPost(@RequestBody CreatePostDto post) throws UserRoleException, TopicNotFoundException {
-      PostDto addedPost = postFacade.addPost(post);
-
-      return ResponseEntity.ok(addedPost);
-  }
+//  @PostMapping("/")
+//  public ResponseEntity<PostDto> addPost(@RequestBody CreatePostDto post) throws UserRoleException, TopicNotFoundException {
+//      PostDto addedPost = postFacade.addPost(post);
+//
+//      return ResponseEntity.ok(addedPost);
+//  }
 
   @DeleteMapping("/{postId}")
   public ResponseEntity<?> deletePost(@PathVariable Long postId) throws PostNotFoundException {
