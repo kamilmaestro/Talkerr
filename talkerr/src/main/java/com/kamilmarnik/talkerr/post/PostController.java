@@ -1,9 +1,12 @@
 package com.kamilmarnik.talkerr.post;
 
+import com.kamilmarnik.talkerr.comment.dto.CommentDto;
+import com.kamilmarnik.talkerr.comment.dto.CreateCommentDto;
 import com.kamilmarnik.talkerr.post.domain.PostFacade;
 import com.kamilmarnik.talkerr.post.dto.PostDto;
 import com.kamilmarnik.talkerr.post.exception.PostNotFoundException;
 import com.kamilmarnik.talkerr.topic.exception.TopicNotFoundException;
+import com.kamilmarnik.talkerr.user.exception.UserRoleException;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -33,13 +36,6 @@ class PostController {
       return ResponseEntity.ok(post);
   }
 
-//  @PostMapping("/")
-//  public ResponseEntity<PostDto> addPost(@RequestBody CreatePostDto post) throws UserRoleException, TopicNotFoundException {
-//      PostDto addedPost = postFacade.addPost(post);
-//
-//      return ResponseEntity.ok(addedPost);
-//  }
-
   @DeleteMapping("/{postId}")
   public ResponseEntity<?> deletePost(@PathVariable Long postId) throws PostNotFoundException {
       postFacade.deletePost(postId);
@@ -52,5 +48,12 @@ class PostController {
     Page<PostDto> posts = postFacade.getPostsByTopicId(pageable, topicId);
 
     return ResponseEntity.ok(posts);
+  }
+
+  @PostMapping("/comment/")
+  public ResponseEntity<CommentDto> addCommentToPost(@RequestBody CreateCommentDto comment) throws PostNotFoundException, UserRoleException {
+    CommentDto savedComment = postFacade.addCommentToPost(comment);
+
+    return ResponseEntity.ok(savedComment);
   }
 }

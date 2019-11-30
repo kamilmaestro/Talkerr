@@ -1,5 +1,8 @@
 package com.kamilmarnik.talkerr.post.domain;
 
+import com.kamilmarnik.talkerr.comment.domain.CommentFacade;
+import com.kamilmarnik.talkerr.comment.dto.CommentDto;
+import com.kamilmarnik.talkerr.comment.dto.CreateCommentDto;
 import com.kamilmarnik.talkerr.post.dto.CreatePostDto;
 import com.kamilmarnik.talkerr.post.dto.PostDto;
 import com.kamilmarnik.talkerr.post.exception.PostNotFoundException;
@@ -22,6 +25,7 @@ public class PostFacade {
 
   PostRepository postRepository;
   UserFacade userFacade;
+  CommentFacade commentFacade;
 
   public PostDto addPost(CreatePostDto post) throws UserRoleException {
     UserDto user = userFacade.getLoggedUser();
@@ -49,6 +53,12 @@ public class PostFacade {
     Objects.requireNonNull(pageable, "Wrong page or size of list of posts");
 
     return postRepository.findAllByTopicId(pageable, topicId).map(Post::dto);
+  }
+
+  public CommentDto addCommentToPost(CreateCommentDto comment) throws UserRoleException, PostNotFoundException {
+    getPost(comment.getPostId());
+
+    return commentFacade.addComment(comment);
   }
 
   private void checkIfUserCanAddPost(UserDto user, CreatePostDto post) throws UserRoleException {

@@ -4,7 +4,6 @@ import com.kamilmarnik.talkerr.comment.dto.CommentDto;
 import com.kamilmarnik.talkerr.comment.dto.CreateCommentDto;
 import com.kamilmarnik.talkerr.comment.exception.CommentNotFoundException;
 import com.kamilmarnik.talkerr.post.domain.PostFacade;
-import com.kamilmarnik.talkerr.post.exception.PostNotFoundException;
 import com.kamilmarnik.talkerr.user.domain.UserFacade;
 import com.kamilmarnik.talkerr.user.dto.UserDto;
 import com.kamilmarnik.talkerr.user.dto.UserStatusDto;
@@ -30,7 +29,7 @@ public class CommentFacade {
         .dto();
   }
 
-  public CommentDto addComment(CreateCommentDto comment) throws PostNotFoundException, UserRoleException {
+  public CommentDto addComment(CreateCommentDto comment) throws UserRoleException {
     UserDto loggedUser = userFacade.getLoggedUser();
     checkIfUserCanAddComment(comment, loggedUser);
 
@@ -44,9 +43,8 @@ public class CommentFacade {
     }
   }
 
-  private void checkIfUserCanAddComment(CreateCommentDto comment, UserDto user) throws PostNotFoundException, UserRoleException {
+  private void checkIfUserCanAddComment(CreateCommentDto comment, UserDto user) throws UserRoleException {
     Objects.requireNonNull(comment, "Comment can not be created due to invalid data");
-    checkIfPostExists(comment.getPostId());
     if(user.getStatus() != UserStatusDto.REGISTERED && user.getStatus() != UserStatusDto.ADMIN) {
       throw new UserRoleException("User with username: " + user.getLogin() + " does not have a permission to add a new comment");
     }
@@ -55,10 +53,6 @@ public class CommentFacade {
   private boolean canUserDeleteComment(long commentId, UserDto user) throws CommentNotFoundException {
     CommentDto comment = getComment(commentId);
     return user.getUserId() == comment.getAuthorId() && userFacade.isAdminOrRegistered(user);
-  }
-
-  private void checkIfPostExists(long postId) throws PostNotFoundException {
-    postFacade.getPost(postId);
   }
 
   private CommentDto createComment(CreateCommentDto comment, long authorId) {
