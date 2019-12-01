@@ -3,6 +3,7 @@ package com.kamilmarnik.talkerr.comment.domain;
 import com.kamilmarnik.talkerr.comment.dto.CommentDto;
 import com.kamilmarnik.talkerr.comment.dto.CreateCommentDto;
 import com.kamilmarnik.talkerr.comment.exception.CommentNotFoundException;
+import com.kamilmarnik.talkerr.comment.exception.InvalidCommentContentException;
 import com.kamilmarnik.talkerr.post.domain.PostFacade;
 import com.kamilmarnik.talkerr.user.domain.UserFacade;
 import com.kamilmarnik.talkerr.user.dto.UserDto;
@@ -11,9 +12,10 @@ import com.kamilmarnik.talkerr.user.exception.UserRoleException;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.experimental.FieldDefaults;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.util.Optional;
 
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -29,9 +31,10 @@ public class CommentFacade {
         .dto();
   }
 
-  public CommentDto addComment(CreateCommentDto comment) throws UserRoleException {
+  public CommentDto addComment(CreateCommentDto comment) throws UserRoleException, InvalidCommentContentException {
     UserDto loggedUser = userFacade.getLoggedUser();
-    checkIfUserCanAddComment(comment, loggedUser);
+    checkCommentContent(comment.getContent());
+    checkIfUserCanAddComment(loggedUser);
 
     return commentRepository.save(Comment.fromDto(createComment(comment, loggedUser.getUserId()))).dto();
   }
@@ -43,8 +46,13 @@ public class CommentFacade {
     }
   }
 
-  private void checkIfUserCanAddComment(CreateCommentDto comment, UserDto user) throws UserRoleException {
-    Objects.requireNonNull(comment, "Comment can not be created due to invalid data");
+  private void checkCommentContent(String commentContent) throws InvalidCommentContentException {
+    Optional.ofNullable(commentContent)
+        .filter(StringUtils::isNotBlank)
+        .orElseThrow(() -> new InvalidCommentContentException("Can add comment with such content: " + commentContent));
+  }
+
+  private void checkIfUserCanAddComment(UserDto user) throws UserRoleException {
     if(user.getStatus() != UserStatusDto.REGISTERED && user.getStatus() != UserStatusDto.ADMIN) {
       throw new UserRoleException("User with username: " + user.getLogin() + " does not have a permission to add a new comment");
     }

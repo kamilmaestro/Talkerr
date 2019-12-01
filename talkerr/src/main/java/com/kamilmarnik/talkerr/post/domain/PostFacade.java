@@ -3,6 +3,7 @@ package com.kamilmarnik.talkerr.post.domain;
 import com.kamilmarnik.talkerr.comment.domain.CommentFacade;
 import com.kamilmarnik.talkerr.comment.dto.CommentDto;
 import com.kamilmarnik.talkerr.comment.dto.CreateCommentDto;
+import com.kamilmarnik.talkerr.comment.exception.InvalidCommentContentException;
 import com.kamilmarnik.talkerr.post.dto.CreatePostDto;
 import com.kamilmarnik.talkerr.post.dto.PostDto;
 import com.kamilmarnik.talkerr.post.exception.PostNotFoundException;
@@ -55,7 +56,8 @@ public class PostFacade {
     return postRepository.findAllByTopicId(pageable, topicId).map(Post::dto);
   }
 
-  public CommentDto addCommentToPost(CreateCommentDto comment) throws UserRoleException, PostNotFoundException {
+  public CommentDto addCommentToPost(CreateCommentDto comment) throws UserRoleException, PostNotFoundException, InvalidCommentContentException {
+    Objects.requireNonNull(comment, "Comment can not be created due to invalid data");
     getPost(comment.getPostId());
 
     return commentFacade.addComment(comment);
