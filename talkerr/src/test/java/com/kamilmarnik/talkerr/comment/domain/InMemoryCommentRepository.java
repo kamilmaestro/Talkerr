@@ -60,7 +60,7 @@ class InMemoryCommentRepository implements CommentRepository {
   @Override
   public Comment save(Comment value) {
     if(value.getCommentId() == null || value.getCommentId() == 0) {
-      value = value.toBuilder().postId(new Random().nextLong()).build();
+      value = value.toBuilder().commentId(new Random().nextLong()).build();
     }
     values.put(value.getCommentId(), value);
 
