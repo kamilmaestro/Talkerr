@@ -49,6 +49,7 @@ public class TopicFacade {
   }
 
   public PostDto addPostToTopic(CreatePostDto post) throws UserRoleException, TopicNotFoundException {
+    Objects.requireNonNull(post, "Post can not be created due to invalid data");
     getTopic(post.getTopicId());
 
     return postFacade.addPost(post);

@@ -31,6 +31,7 @@ class Comment {
 
   @NotNull
   @Column(name = "post_id")
+  @Getter(AccessLevel.PACKAGE)
   Long postId;
 
   @NotNull

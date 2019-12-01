@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 class InMemoryCommentRepository implements CommentRepository {
 
@@ -134,5 +135,13 @@ class InMemoryCommentRepository implements CommentRepository {
   @Override
   public <S extends Comment> boolean exists(Example<S> example) {
     return false;
+  }
+
+  @Override
+  public void deleteCommentsByPostId(long postId) {
+    List<Comment> comments = values.values().stream()
+        .filter(comment -> comment.getPostId() == postId)
+        .collect(Collectors.toList());
+    values.values().removeAll(comments);
   }
 }

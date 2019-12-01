@@ -45,8 +45,9 @@ public class PostFacade {
     UserDto user = userFacade.getLoggedUser();
     PostDto post = getPost(postId);
 
-    if(post.getAuthorId() == user.getUserId() || user.getStatus().equals(UserStatusDto.ADMIN)) {
+    if(canUserDeletePost(post, user)) {
       postRepository.deleteById(postId);
+      commentFacade.deleteCommentsByPostId(postId);
     }
   }
 
@@ -64,10 +65,13 @@ public class PostFacade {
   }
 
   private void checkIfUserCanAddPost(UserDto user, CreatePostDto post) throws UserRoleException {
-    Objects.requireNonNull(post, "Post can not be created due to invalid data");
     if(!userFacade.isAdminOrRegistered(user)) {
       throw new UserRoleException("User with username: " + user.getLogin() + " does not have a permission to add a new post");
     }
+  }
+
+  private boolean canUserDeletePost(PostDto post, UserDto user) {
+    return post.getAuthorId() == user.getUserId() || user.getStatus().equals(UserStatusDto.ADMIN);
   }
 
   private PostDto createPost(CreatePostDto post, long authorId) {

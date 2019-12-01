@@ -46,6 +46,10 @@ public class CommentFacade {
     }
   }
 
+  public void deleteCommentsByPostId(long postId) {
+    commentRepository.deleteCommentsByPostId(postId);
+  }
+
   private void checkCommentContent(String commentContent) throws InvalidCommentContentException {
     Optional.ofNullable(commentContent)
         .filter(StringUtils::isNotBlank)
