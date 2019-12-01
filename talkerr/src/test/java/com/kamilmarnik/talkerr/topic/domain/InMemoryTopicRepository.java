@@ -37,8 +37,8 @@ public class InMemoryTopicRepository implements TopicRepository{
   }
 
   @Override
-  public void deleteById(Long aLong) {
-
+  public void deleteById(Long topicId) {
+    values.remove(topicId);
   }
 
   @Override

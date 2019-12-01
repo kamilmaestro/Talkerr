@@ -55,6 +55,16 @@ public class TopicFacade {
     return postFacade.addPost(post);
   }
 
+  public void deleteTopic(long topicId) throws TopicNotFoundException {
+    UserDto loggedUser = userFacade.getLoggedUser();
+    getTopic(topicId);
+
+    if(userFacade.isAdmin(loggedUser)) {
+      topicRepository.deleteById(topicId);
+      postFacade.deletePostsByTopicId(topicId);
+    }
+  }
+
   private void checkIfUserCanAddTopic(UserDto user, CreateTopicDto topic) throws UserRoleException, TopicAlreadyExistsException, InvalidTopicContentException {
     Objects.requireNonNull(topic, "Topic can not be created due to invalid data");
     checkIfTopicAlreadyExists(topic);

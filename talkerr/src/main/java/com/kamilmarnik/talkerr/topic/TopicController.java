@@ -58,4 +58,11 @@ public class TopicController {
 
     return ResponseEntity.ok(topics);
   }
+
+  @DeleteMapping("/{topicId}")
+  ResponseEntity<?> deleteTopic(@PathVariable long topicId) throws TopicNotFoundException {
+    topicFacade.deleteTopic(topicId);
+
+    return ResponseEntity.ok().build();
+  }
 }

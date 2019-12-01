@@ -141,4 +141,17 @@ class InMemoryPostRepository implements PostRepository {
         .filter(post -> post.getTopicId() == topicId)
         .collect(Collectors.toList()));
   }
+
+  @Override
+  public Set<Long> findPostsIdsByTopicId(long topicId) {
+    return values.values().stream()
+        .filter(post -> post.getTopicId() == topicId)
+        .map(Post::getPostId)
+        .collect(Collectors.toSet());
+  }
+
+  @Override
+  public void deletePostsByTopicId(long topicId) {
+
+  }
 }

@@ -144,4 +144,9 @@ class InMemoryCommentRepository implements CommentRepository {
         .collect(Collectors.toList());
     values.values().removeAll(comments);
   }
+
+  @Override
+  public void deleteCommentsByPostIdIn(Set<Long> postsIds) {
+
+  }
 }

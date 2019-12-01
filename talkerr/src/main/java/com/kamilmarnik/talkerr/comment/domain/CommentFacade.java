@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Set;
 
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -48,6 +49,10 @@ public class CommentFacade {
 
   public void deleteCommentsByPostId(long postId) {
     commentRepository.deleteCommentsByPostId(postId);
+  }
+
+  public void deleteCommentsByPostIdIn(Set<Long> postsIds) {
+    commentRepository.deleteCommentsByPostIdIn(postsIds);
   }
 
   private void checkCommentContent(String commentContent) throws InvalidCommentContentException {

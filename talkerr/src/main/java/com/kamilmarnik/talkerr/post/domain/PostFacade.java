@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Set;
 
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -62,6 +63,12 @@ public class PostFacade {
     getPost(comment.getPostId());
 
     return commentFacade.addComment(comment);
+  }
+
+  public void deletePostsByTopicId(long topicId) {
+    Set<Long> postsIds = postRepository.findPostsIdsByTopicId(topicId);
+    postRepository.deletePostsByTopicId(topicId);
+    commentFacade.deleteCommentsByPostIdIn(postsIds);
   }
 
   private void checkIfUserCanAddPost(UserDto user, CreatePostDto post) throws UserRoleException {
