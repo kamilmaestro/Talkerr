@@ -152,6 +152,9 @@ class InMemoryPostRepository implements PostRepository {
 
   @Override
   public void deletePostsByTopicId(long topicId) {
-
+    List<Post> posts = values.values().stream()
+        .filter(post -> post.getTopicId() == topicId)
+        .collect(Collectors.toList());
+    values.values().removeAll(posts);
   }
 }
