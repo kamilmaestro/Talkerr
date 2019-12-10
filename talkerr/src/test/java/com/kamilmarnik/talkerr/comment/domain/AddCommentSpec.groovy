@@ -3,7 +3,7 @@ package com.kamilmarnik.talkerr.comment.domain
 import com.kamilmarnik.talkerr.comment.exception.InvalidCommentContentException
 
 import static com.kamilmarnik.talkerr.comment.domain.CommentCreator.createNewComment
-import static com.kamilmarnik.talkerr.user.domain.UserCreator.getDEF_LOGIN
+import static com.kamilmarnik.talkerr.user.domain.UserCreator.DEF_LOGIN
 import static com.kamilmarnik.talkerr.user.domain.UserCreator.registerNewUser
 
 class AddCommentSpec extends CommentSpec {

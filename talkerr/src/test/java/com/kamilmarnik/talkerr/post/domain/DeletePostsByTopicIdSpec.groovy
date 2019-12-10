@@ -1,8 +1,8 @@
 package com.kamilmarnik.talkerr.post.domain
 
-import static com.kamilmarnik.talkerr.user.domain.UserCreator.DEF_LOGIN
 import static com.kamilmarnik.talkerr.user.domain.UserCreator.registerNewUser
 import static com.kamilmarnik.talkerr.post.domain.PostCreator.createNewPost
+import static com.kamilmarnik.talkerr.user.domain.UserCreator.DEF_LOGIN
 
 class DeletePostsByTopicIdSpec extends PostSpec {
 

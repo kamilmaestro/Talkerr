@@ -2,7 +2,7 @@ package com.kamilmarnik.talkerr.comment.domain
 
 import com.kamilmarnik.talkerr.comment.exception.CommentNotFoundException
 
-import static com.kamilmarnik.talkerr.user.domain.UserCreator.getDEF_LOGIN
+import static com.kamilmarnik.talkerr.user.domain.UserCreator.DEF_LOGIN
 import static com.kamilmarnik.talkerr.user.domain.UserCreator.registerNewUser
 
 class DeleteCommentsByPostIdSpec extends CommentSpec {

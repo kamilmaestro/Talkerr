@@ -3,11 +3,8 @@ package com.kamilmarnik.talkerr.topic.domain
 import com.kamilmarnik.talkerr.topic.exception.InvalidTopicContentException
 import com.kamilmarnik.talkerr.user.exception.UserRoleException
 
-import static com.kamilmarnik.talkerr.user.domain.UserCreator.createAdmin
-import static com.kamilmarnik.talkerr.user.domain.UserCreator.createGuest
-import static com.kamilmarnik.talkerr.user.domain.UserCreator.getDEF_LOGIN
-import static com.kamilmarnik.talkerr.user.domain.UserCreator.registerNewUser
 import static com.kamilmarnik.talkerr.topic.domain.TopicCreator.createNewTopic
+import static com.kamilmarnik.talkerr.user.domain.UserCreator.*
 
 class AddTopicSpec extends TopicSpec {
 

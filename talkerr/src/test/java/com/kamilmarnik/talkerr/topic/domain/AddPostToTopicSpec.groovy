@@ -5,7 +5,9 @@ import com.kamilmarnik.talkerr.topic.exception.TopicNotFoundException
 import static com.kamilmarnik.talkerr.post.domain.PostCreator.createNewPost
 import static com.kamilmarnik.talkerr.post.domain.PostCreator.getPost
 import static com.kamilmarnik.talkerr.topic.domain.TopicCreator.createNewTopic
-import static com.kamilmarnik.talkerr.user.domain.UserCreator.*
+import static com.kamilmarnik.talkerr.user.domain.UserCreator.registerNewUser
+import static com.kamilmarnik.talkerr.user.domain.UserCreator.createAdmin
+import static com.kamilmarnik.talkerr.user.domain.UserCreator.DEF_LOGIN
 
 class AddPostToTopicSpec extends TopicSpec {
 

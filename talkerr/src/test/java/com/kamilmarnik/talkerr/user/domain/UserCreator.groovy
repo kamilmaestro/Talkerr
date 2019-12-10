@@ -8,8 +8,8 @@ import java.time.LocalDateTime
 
 abstract class UserCreator {
 
-    final static DEF_LOGIN = "DefLog"
-    final static DEF_PASSWORD = "DefPass123"
+    public final static DEF_LOGIN = "DefLog"
+    public final static DEF_PASSWORD = "DefPass123"
 
     static RegistrationRequest registerNewUser() {
         registerNewUser(DEF_LOGIN)
