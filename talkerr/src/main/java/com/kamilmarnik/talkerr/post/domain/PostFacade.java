@@ -1,10 +1,12 @@
 package com.kamilmarnik.talkerr.post.domain;
 
+import com.kamilmarnik.talkerr.comment.domain.CommentFacade;
+import com.kamilmarnik.talkerr.comment.dto.CommentDto;
+import com.kamilmarnik.talkerr.comment.dto.CreateCommentDto;
+import com.kamilmarnik.talkerr.comment.exception.InvalidCommentContentException;
 import com.kamilmarnik.talkerr.post.dto.CreatePostDto;
 import com.kamilmarnik.talkerr.post.dto.PostDto;
 import com.kamilmarnik.talkerr.post.exception.PostNotFoundException;
-import com.kamilmarnik.talkerr.topic.domain.TopicFacade;
-import com.kamilmarnik.talkerr.topic.exception.TopicNotFoundException;
 import com.kamilmarnik.talkerr.user.domain.UserFacade;
 import com.kamilmarnik.talkerr.user.dto.UserDto;
 import com.kamilmarnik.talkerr.user.dto.UserStatusDto;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Set;
 
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -24,9 +27,9 @@ public class PostFacade {
 
   PostRepository postRepository;
   UserFacade userFacade;
-  TopicFacade topicFacade;
+  CommentFacade commentFacade;
 
-  public PostDto addPost(CreatePostDto post) throws UserRoleException, TopicNotFoundException {
+  public PostDto addPost(CreatePostDto post) throws UserRoleException {
     UserDto user = userFacade.getLoggedUser();
     checkIfUserCanAddPost(user, post);
 
@@ -43,27 +46,39 @@ public class PostFacade {
     UserDto user = userFacade.getLoggedUser();
     PostDto post = getPost(postId);
 
-    if(post.getAuthorId() == user.getUserId() || user.getStatus().equals(UserStatusDto.ADMIN)) {
+    if(canUserDeletePost(post, user)) {
       postRepository.deleteById(postId);
+      commentFacade.deleteCommentsByPostId(postId);
     }
   }
 
-  public Page<PostDto> getPostsByTopicId(Pageable pageable, long topicId) throws TopicNotFoundException {
+  public Page<PostDto> getPostsByTopicId(Pageable pageable, long topicId) {
     Objects.requireNonNull(pageable, "Wrong page or size of list of posts");
-    checkIfTopicExists(topicId);
+
     return postRepository.findAllByTopicId(pageable, topicId).map(Post::dto);
   }
 
-  private void checkIfUserCanAddPost(UserDto user, CreatePostDto post) throws UserRoleException, TopicNotFoundException {
-    Objects.requireNonNull(post, "Post can not be created due to invalid data");
-    checkIfTopicExists(post.getTopicId());
+  public CommentDto addCommentToPost(CreateCommentDto comment) throws UserRoleException, PostNotFoundException, InvalidCommentContentException {
+    Objects.requireNonNull(comment, "Comment can not be created due to invalid data");
+    getPost(comment.getPostId());
+
+    return commentFacade.addComment(comment);
+  }
+
+  public void deletePostsByTopicId(long topicId) {
+    Set<Long> postsIds = postRepository.findPostsIdsByTopicId(topicId);
+    postRepository.deletePostsByTopicId(topicId);
+    commentFacade.deleteCommentsByPostIdIn(postsIds);
+  }
+
+  private void checkIfUserCanAddPost(UserDto user, CreatePostDto post) throws UserRoleException {
     if(!userFacade.isAdminOrRegistered(user)) {
       throw new UserRoleException("User with username: " + user.getLogin() + " does not have a permission to add a new post");
     }
   }
 
-  private void checkIfTopicExists(long topicId) throws TopicNotFoundException {
-    topicFacade.getTopic(topicId);
+  private boolean canUserDeletePost(PostDto post, UserDto user) {
+    return post.getAuthorId() == user.getUserId() || user.getStatus().equals(UserStatusDto.ADMIN);
   }
 
   private PostDto createPost(CreatePostDto post, long authorId) {

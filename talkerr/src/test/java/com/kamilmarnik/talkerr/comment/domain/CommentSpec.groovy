@@ -1,7 +1,6 @@
 package com.kamilmarnik.talkerr.comment.domain
 
 import com.kamilmarnik.talkerr.logic.authentication.LoggedUserGetter
-import com.kamilmarnik.talkerr.post.domain.PostFacade
 import com.kamilmarnik.talkerr.post.dto.PostDto
 import com.kamilmarnik.talkerr.user.domain.InMemoryUserRepository
 import com.kamilmarnik.talkerr.user.domain.UserFacade
@@ -17,7 +16,6 @@ class CommentSpec extends Specification {
     UserRepository userRepository = new InMemoryUserRepository()
     LoggedUserGetter loggedUserGetter = Mock(LoggedUserGetter.class)
     UserFacade userFacade = createUserFacade()
-    PostFacade postFacade = Mock(PostFacade.class)
     CommentRepository commentRepository = new InMemoryCommentRepository()
     CommentFacade commentFacade = createCommentFacade()
     long fstPostId = 111L
@@ -29,7 +27,7 @@ class CommentSpec extends Specification {
     }
 
     CommentFacade createCommentFacade() {
-        new CommentFacadeCreator().createCommentFacade(commentRepository, userFacade, postFacade)
+        new CommentFacadeCreator().createCommentFacade(commentRepository, userFacade)
     }
 
     PostDto getPost(long authorId, long postId) {

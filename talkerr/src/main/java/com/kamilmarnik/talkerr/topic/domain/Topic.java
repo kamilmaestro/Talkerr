@@ -24,11 +24,11 @@ class Topic {
 
   @NotNull
   @Getter
-  @Column(name = "name", length = 30)
+  @Column(name = "name", length = TopicDto.MAX_NAME_LENGTH)
   String name;
 
   @NotNull
-  @Column(name = "description", length = 100)
+  @Column(name = "description", length = TopicDto.MAX_DESCRIPTION_LENGTH)
   String description;
 
   @Column(name = "created_on", columnDefinition = "TIMESTAMP WITH TIME ZONE NOT NULL")

@@ -1,5 +1,7 @@
 package com.kamilmarnik.talkerr.topic;
 
+import com.kamilmarnik.talkerr.post.dto.CreatePostDto;
+import com.kamilmarnik.talkerr.post.dto.PostDto;
 import com.kamilmarnik.talkerr.topic.domain.TopicFacade;
 import com.kamilmarnik.talkerr.topic.dto.CreateTopicDto;
 import com.kamilmarnik.talkerr.topic.dto.TopicDto;
@@ -43,10 +45,24 @@ public class TopicController {
     return ResponseEntity.ok(topic);
   }
 
+  @PostMapping("/post/")
+  public ResponseEntity<PostDto> addPostToTopic(@RequestBody CreatePostDto post) throws UserRoleException, TopicNotFoundException {
+    PostDto addedPost = topicFacade.addPostToTopic(post);
+
+    return ResponseEntity.ok(addedPost);
+  }
+
   @GetMapping("/")
   ResponseEntity<List<TopicDto>> getTopics() {
     List<TopicDto> topics = topicFacade.getTopics();
 
     return ResponseEntity.ok(topics);
+  }
+
+  @DeleteMapping("/{topicId}")
+  ResponseEntity<?> deleteTopic(@PathVariable long topicId) throws TopicNotFoundException {
+    topicFacade.deleteTopic(topicId);
+
+    return ResponseEntity.ok().build();
   }
 }

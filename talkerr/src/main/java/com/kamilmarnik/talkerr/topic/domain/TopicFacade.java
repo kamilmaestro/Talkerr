@@ -1,5 +1,8 @@
 package com.kamilmarnik.talkerr.topic.domain;
 
+import com.kamilmarnik.talkerr.post.domain.PostFacade;
+import com.kamilmarnik.talkerr.post.dto.CreatePostDto;
+import com.kamilmarnik.talkerr.post.dto.PostDto;
 import com.kamilmarnik.talkerr.topic.dto.CreateTopicDto;
 import com.kamilmarnik.talkerr.topic.dto.TopicDto;
 import com.kamilmarnik.talkerr.topic.exception.InvalidTopicContentException;
@@ -24,6 +27,7 @@ public class TopicFacade {
 
   TopicRepository topicRepository;
   UserFacade userFacade;
+  PostFacade postFacade;
 
   public TopicDto addTopic(CreateTopicDto topic) throws UserRoleException, TopicAlreadyExistsException, InvalidTopicContentException {
     UserDto user = userFacade.getLoggedUser();
@@ -42,6 +46,23 @@ public class TopicFacade {
     return topicRepository.findAll().stream()
         .map(Topic::dto)
         .collect(Collectors.toList());
+  }
+
+  public PostDto addPostToTopic(CreatePostDto post) throws UserRoleException, TopicNotFoundException {
+    Objects.requireNonNull(post, "Post can not be created due to invalid data");
+    getTopic(post.getTopicId());
+
+    return postFacade.addPost(post);
+  }
+
+  public void deleteTopic(long topicId) throws TopicNotFoundException {
+    UserDto loggedUser = userFacade.getLoggedUser();
+    getTopic(topicId);
+
+    if(userFacade.isAdmin(loggedUser)) {
+      topicRepository.deleteById(topicId);
+      postFacade.deletePostsByTopicId(topicId);
+    }
   }
 
   private void checkIfUserCanAddTopic(UserDto user, CreateTopicDto topic) throws UserRoleException, TopicAlreadyExistsException, InvalidTopicContentException {
