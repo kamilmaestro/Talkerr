@@ -2,14 +2,12 @@ package com.kamilmarnik.talkerr.comment;
 
 import com.kamilmarnik.talkerr.comment.domain.CommentFacade;
 import com.kamilmarnik.talkerr.comment.dto.CommentDto;
+import com.kamilmarnik.talkerr.comment.exception.CommentNotFoundException;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,6 +21,20 @@ class CommentController {
   @Autowired
   public CommentController(@Autowired CommentFacade commentFacade) {
     this.commentFacade = commentFacade;
+  }
+
+  @GetMapping("/{commentId}")
+  ResponseEntity<CommentDto> getComment(@PathVariable long commentId) throws CommentNotFoundException {
+    CommentDto comment = commentFacade.getComment(commentId);
+
+    return ResponseEntity.ok(comment);
+  }
+
+  @DeleteMapping("/{commentId}")
+  ResponseEntity<?> deleteComment(@PathVariable long commentId) throws CommentNotFoundException {
+    commentFacade.deleteComment(commentId);
+
+    return ResponseEntity.ok().build();
   }
 
   @GetMapping("/post/{postId}")
