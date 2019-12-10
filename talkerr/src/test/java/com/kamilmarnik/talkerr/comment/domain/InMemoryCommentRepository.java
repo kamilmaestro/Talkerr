@@ -152,4 +152,12 @@ class InMemoryCommentRepository implements CommentRepository {
         .collect(Collectors.toList());
     values.values().removeAll(comments);
   }
+
+  @Override
+  public List<Comment> findCommentsByPostIdOrderByCreatedOn(long postId) {
+    return values.values().stream()
+        .filter(comment -> comment.getPostId() == postId)
+        .sorted(Comparator.comparing(Comment::getCreatedOn))
+        .collect(Collectors.toList());
+  }
 }

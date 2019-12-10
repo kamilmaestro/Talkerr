@@ -15,8 +15,10 @@ import lombok.experimental.FieldDefaults;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -45,6 +47,11 @@ public class CommentFacade {
     if(canUserDeleteComment(commentId, loggedUser)) {
       commentRepository.deleteById(commentId);
     }
+  }
+
+  public List<CommentDto> getCommentsByPostId(long postId) {
+    return commentRepository.findCommentsByPostIdOrderByCreatedOn(postId).stream()
+        .map(Comment::dto).collect(Collectors.toList());
   }
 
   public void deleteCommentsByPostId(long postId) {

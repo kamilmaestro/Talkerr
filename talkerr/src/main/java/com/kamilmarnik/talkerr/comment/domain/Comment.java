@@ -27,6 +27,7 @@ class Comment {
   String content;
 
   @Column(name = "created_on", columnDefinition = "TIMESTAMP WITH TIME ZONE NOT NULL")
+  @Getter(AccessLevel.PACKAGE)
   LocalDateTime createdOn;
 
   @NotNull
