@@ -31,7 +31,7 @@ public class PostFacade {
 
   public PostDto addPost(CreatePostDto post) throws UserRoleException {
     UserDto user = userFacade.getLoggedUser();
-    checkIfUserCanAddPost(user, post);
+    checkIfUserCanAddPost(user);
 
     return postRepository.save(Post.fromDto(createPost(post, user.getUserId()))).dto();
   }
@@ -71,7 +71,7 @@ public class PostFacade {
     commentFacade.deleteCommentsByPostIdIn(postsIds);
   }
 
-  private void checkIfUserCanAddPost(UserDto user, CreatePostDto post) throws UserRoleException {
+  private void checkIfUserCanAddPost(UserDto user) throws UserRoleException {
     if(!userFacade.isAdminOrRegistered(user)) {
       throw new UserRoleException("User with username: " + user.getLogin() + " does not have a permission to add a new post");
     }
