@@ -1,12 +1,10 @@
 package com.kamilmarnik.talkerr.post.domain;
 
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 class InMemoryPostRepository implements PostRepository {
 
@@ -135,5 +133,28 @@ class InMemoryPostRepository implements PostRepository {
   @Override
   public <S extends Post> boolean exists(Example<S> example) {
     return false;
+  }
+
+  @Override
+  public Page<Post> findAllByTopicId(Pageable pageable, long topicId) {
+    return new PageImpl<>(values.values().stream()
+        .filter(post -> post.getTopicId() == topicId)
+        .collect(Collectors.toList()));
+  }
+
+  @Override
+  public Set<Long> findPostsIdsByTopicId(long topicId) {
+    return values.values().stream()
+        .filter(post -> post.getTopicId() == topicId)
+        .map(Post::getPostId)
+        .collect(Collectors.toSet());
+  }
+
+  @Override
+  public void deletePostsByTopicId(long topicId) {
+    List<Post> posts = values.values().stream()
+        .filter(post -> post.getTopicId() == topicId)
+        .collect(Collectors.toList());
+    values.values().removeAll(posts);
   }
 }

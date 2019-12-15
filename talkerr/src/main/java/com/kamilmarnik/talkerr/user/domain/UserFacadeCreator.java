@@ -1,5 +1,6 @@
 package com.kamilmarnik.talkerr.user.domain;
 
+import com.kamilmarnik.talkerr.logic.authentication.LoggedUserGetter;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +18,19 @@ public class UserFacadeCreator {
   @Autowired
   PasswordEncoder passwordEncoder;
 
-  public UserFacade createUserFacade(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+  @Autowired
+  LoggedUserGetter loggedUserGetter;
+
+  public UserFacade createUserFacade(UserRepository userRepository, PasswordEncoder passwordEncoder, LoggedUserGetter loggedUserGetter) {
     return UserFacade.builder()
         .userRepository(userRepository)
         .passwordEncoder(passwordEncoder)
+        .loggedUserGetter(loggedUserGetter)
         .build();
   }
 
   @Bean
   public UserFacade createUserFacade() {
-    return createUserFacade(userRepository, passwordEncoder);
+    return createUserFacade(userRepository, passwordEncoder, loggedUserGetter);
   }
 }

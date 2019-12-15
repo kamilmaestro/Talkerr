@@ -1,19 +1,25 @@
 package com.kamilmarnik.talkerr.post.domain;
 
-import com.kamilmarnik.talkerr.post.dto.CreatedPostDto;
+import com.kamilmarnik.talkerr.comment.domain.CommentFacade;
+import com.kamilmarnik.talkerr.comment.dto.CommentDto;
+import com.kamilmarnik.talkerr.comment.dto.CreateCommentDto;
+import com.kamilmarnik.talkerr.comment.exception.InvalidCommentContentException;
+import com.kamilmarnik.talkerr.post.dto.CreatePostDto;
 import com.kamilmarnik.talkerr.post.dto.PostDto;
 import com.kamilmarnik.talkerr.post.exception.PostNotFoundException;
 import com.kamilmarnik.talkerr.user.domain.UserFacade;
 import com.kamilmarnik.talkerr.user.dto.UserDto;
 import com.kamilmarnik.talkerr.user.dto.UserStatusDto;
-import com.kamilmarnik.talkerr.user.exception.UserNotFoundException;
 import com.kamilmarnik.talkerr.user.exception.UserRoleException;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Set;
 
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -21,15 +27,13 @@ public class PostFacade {
 
   PostRepository postRepository;
   UserFacade userFacade;
+  CommentFacade commentFacade;
 
-  public PostDto addPost(CreatedPostDto post) throws UserNotFoundException, UserRoleException {
-    Objects.requireNonNull(post);
-    UserStatusDto userStatus = userFacade.getUser(post.getUserId()).getStatus();
-    if(!UserStatusDto.ADMIN.equals(userStatus) && !UserStatusDto.REGISTERED.equals(userStatus)) {
-      throw new UserRoleException("User with Id:" + post.getUserId() + " does not have a permission to add a new post");
-    }
+  public PostDto addPost(CreatePostDto post) throws UserRoleException {
+    UserDto user = userFacade.getLoggedUser();
+    checkIfUserCanAddPost(user, post);
 
-    return postRepository.save(Post.fromDto(createPost(post))).dto();
+    return postRepository.save(Post.fromDto(createPost(post, user.getUserId()))).dto();
   }
 
   public PostDto getPost(long postId) throws PostNotFoundException {
@@ -38,20 +42,51 @@ public class PostFacade {
         .dto();
   }
 
-  public void deletePost(long postId, long loggedUserId) throws UserNotFoundException, PostNotFoundException {
-    UserDto user = userFacade.getUser(loggedUserId);
+  public void deletePost(long postId) throws PostNotFoundException {
+    UserDto user = userFacade.getLoggedUser();
     PostDto post = getPost(postId);
 
-    if(post.getUserId() == loggedUserId || user.getStatus().equals(UserStatusDto.ADMIN)) {
+    if(canUserDeletePost(post, user)) {
       postRepository.deleteById(postId);
+      commentFacade.deleteCommentsByPostId(postId);
     }
   }
 
-  private PostDto createPost(CreatedPostDto post) {
+  public Page<PostDto> getPostsByTopicId(Pageable pageable, long topicId) {
+    Objects.requireNonNull(pageable, "Wrong page or size of list of posts");
+
+    return postRepository.findAllByTopicId(pageable, topicId).map(Post::dto);
+  }
+
+  public CommentDto addCommentToPost(CreateCommentDto comment) throws UserRoleException, PostNotFoundException, InvalidCommentContentException {
+    Objects.requireNonNull(comment, "Comment can not be created due to invalid data");
+    getPost(comment.getPostId());
+
+    return commentFacade.addComment(comment);
+  }
+
+  public void deletePostsByTopicId(long topicId) {
+    Set<Long> postsIds = postRepository.findPostsIdsByTopicId(topicId);
+    postRepository.deletePostsByTopicId(topicId);
+    commentFacade.deleteCommentsByPostIdIn(postsIds);
+  }
+
+  private void checkIfUserCanAddPost(UserDto user, CreatePostDto post) throws UserRoleException {
+    if(!userFacade.isAdminOrRegistered(user)) {
+      throw new UserRoleException("User with username: " + user.getLogin() + " does not have a permission to add a new post");
+    }
+  }
+
+  private boolean canUserDeletePost(PostDto post, UserDto user) {
+    return post.getAuthorId() == user.getUserId() || user.getStatus().equals(UserStatusDto.ADMIN);
+  }
+
+  private PostDto createPost(CreatePostDto post, long authorId) {
     return PostDto.builder()
         .content(post.getContent())
-        .userId(post.getUserId())
         .createdOn(LocalDateTime.now())
+        .authorId(authorId)
+        .topicId(post.getTopicId())
         .build();
   }
 }

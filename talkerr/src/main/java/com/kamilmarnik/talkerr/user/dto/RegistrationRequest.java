@@ -8,7 +8,8 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Getter
-public class LoggedUserDto {
-  String login;
+public class RegistrationRequest {
+  String username;
   String password;
+  String email;
 }

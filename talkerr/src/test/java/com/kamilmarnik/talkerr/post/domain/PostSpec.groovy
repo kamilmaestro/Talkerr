@@ -1,65 +1,71 @@
 package com.kamilmarnik.talkerr.post.domain
 
-import com.kamilmarnik.talkerr.post.exception.PostNotFoundException
+import com.kamilmarnik.talkerr.comment.domain.CommentFacade
+import com.kamilmarnik.talkerr.comment.dto.CommentDto
+import com.kamilmarnik.talkerr.logic.authentication.LoggedUserGetter
+import com.kamilmarnik.talkerr.post.dto.PostDto
+import com.kamilmarnik.talkerr.topic.dto.TopicDto
 import com.kamilmarnik.talkerr.user.domain.InMemoryUserRepository
 import com.kamilmarnik.talkerr.user.domain.UserFacade
 import com.kamilmarnik.talkerr.user.domain.UserFacadeCreator
 import com.kamilmarnik.talkerr.user.domain.UserRepository
+import org.springframework.data.domain.PageRequest
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder
 import spock.lang.Specification
 
-import static com.kamilmarnik.talkerr.post.domain.PostCreator.createNewPost
-import static com.kamilmarnik.talkerr.user.domain.UserCreator.createAdmin
-import static com.kamilmarnik.talkerr.user.domain.UserCreator.registerNewUser
+import java.time.LocalDateTime
 
-class PostSpec extends Specification {
+class PostSpec extends Specification{
 
     UserRepository userRepository = new InMemoryUserRepository()
-    PasswordEncoder passwordEncoder = new BCryptPasswordEncoder()
-    UserFacade userFacade = new UserFacadeCreator().createUserFacade(userRepository, passwordEncoder)
-    PostFacade postFacade = new PostFacadeCreator().createPostFacade(new InMemoryPostRepository(), userFacade)
+    LoggedUserGetter loggedUserGetter = Mock(LoggedUserGetter.class)
+    UserFacade userFacade = createUserFacade()
+    CommentFacade commentFacade = Mock(CommentFacade.class)
+    PostFacade postFacade = createPostFacade()
+    long userId = 11L
+    long fstTopicId = 111L
+    long sndTopicId = 112L
+    long fstPostId = 1111L
+    long sndPostId = 1112L
+    long fstCommentId = 11111L
+    def PAGEABLE = PageRequest.of(0, 20)
 
-    def ADMIN = createAdmin(userRepository)
+    UserFacade createUserFacade() {
+        new UserFacadeCreator().createUserFacade(userRepository, new BCryptPasswordEncoder(), loggedUserGetter)
+    }
 
-    def "user should be able to create a new post"() {
-        given: "there is an user"
-            def user = userFacade.registerUser(registerNewUser())
-        when: "user creates a new post"
-            def post = postFacade.addPost(createNewPost(user.userId, "FIRST POST"))
-            def sndPost = postFacade.addPost(createNewPost(user.userId, "SECOND POST"))
-        then: "post is created"
-            def createdPost = postFacade.getPost(post.postId)
-        and: "post was created correctly"
-            createdPost.postId == post.postId
-        and: "post was created by user"
-            createdPost.userId == user.userId
+    PostFacade createPostFacade() {
+        new PostFacadeCreator().createPostFacade(new InMemoryPostRepository(), userFacade, commentFacade)
+    }
+
+    TopicDto getTopic(long authorId) {
+        TopicDto.builder()
+                .topicId(fstTopicId)
+                .name("Topic name")
+                .description("Topic description")
+                .createdOn(LocalDateTime.now())
+                .authorId(authorId)
+                .build()
+    }
+
+    CommentDto getComment(long authorId, long postId, long commentId) {
+        CommentDto.builder()
+            .commentId(commentId)
+            .content("Def content")
+            .createdOn(LocalDateTime.now())
+            .postId(postId)
+            .authorId(authorId)
+            .build()
 
     }
 
-    def "user should be able to delete a post if he is its creator" () {
-        given: "there is an user"
-            def user = userFacade.registerUser(registerNewUser())
-        and: "there is a post created by user"
-            def post = postFacade.addPost(createNewPost(user.userId, "POST"))
-        when: "user deletes the post"
-            postFacade.deletePost(post.postId, user.userId)
-        and: "checks deleted post"
-            postFacade.getPost(post.getPostId())
-        then: "post is deleted"
-            thrown PostNotFoundException.class
-    }
-
-    def "admin should be able to delete any post" () {
-        given: "there is an user and admin"
-            def user = userFacade.registerUser(registerNewUser())
-        and: "there is a post created by user"
-            def post = postFacade.addPost(createNewPost(user.userId, "POST"))
-        when: "admin deletes the post created by other user"
-            postFacade.deletePost(post.postId, ADMIN.userId)
-        and: "checks deleted post"
-            postFacade.getPost(post.getPostId())
-        then: "post is deleted"
-            thrown PostNotFoundException.class
+    PostDto getPost(long authorId, long postId) {
+        PostDto.builder()
+                .postId(postId)
+                .content("Post")
+                .createdOn(LocalDateTime.now())
+                .authorId(authorId)
+                .topicId(fstTopicId)
+                .build()
     }
 }

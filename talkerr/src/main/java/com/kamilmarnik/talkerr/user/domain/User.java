@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 @Builder(toBuilder = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "users")
-public class User {
+class User {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +27,7 @@ public class User {
 
   @Getter
   @NotNull
-  @Column(name = "login")
+  @Column(name = "username")
   @Size(min = UserDto.MIN_LOG_LEN, max = UserDto.MAX_LOG_LEN)
   String login;
 
@@ -47,12 +48,17 @@ public class User {
   @Column(name = "registered_on", columnDefinition = "TIMESTAMP WITH TIME ZONE NOT NULL")
   LocalDateTime registeredOn;
 
+  @NotNull
+  @Email(regexp = "^\\w+@[a-zA-Z_]+?\\.[a-zA-Z]{2,3}$")
+  String email;
+
   static User fromDto(UserDto dto) {
     return User.builder()
         .userId(dto.getUserId())
         .login(dto.getLogin())
         .status(UserStatusDto.valueOf(dto.getStatus().name()))
         .registeredOn(dto.getRegisteredOn())
+        .email(dto.getEmail())
         .build();
   }
 
@@ -62,6 +68,7 @@ public class User {
         .login(login)
         .status(UserStatusDto.valueOf(status.name()))
         .registeredOn(registeredOn)
+        .email(email)
         .build();
   }
 }

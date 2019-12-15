@@ -1,8 +1,7 @@
 package com.kamilmarnik.talkerr.user.domain;
 
-import com.kamilmarnik.talkerr.logic.LoggedUserGetter;
-import com.kamilmarnik.talkerr.logic.LoginAndPasswordVerifier;
-import com.kamilmarnik.talkerr.user.dto.LoggedUserDto;
+import com.kamilmarnik.talkerr.logic.authentication.LoggedUserGetter;
+import com.kamilmarnik.talkerr.user.dto.RegistrationRequest;
 import com.kamilmarnik.talkerr.user.dto.UserDto;
 import com.kamilmarnik.talkerr.user.dto.UserStatusDto;
 import com.kamilmarnik.talkerr.user.exception.InvalidLoginException;
@@ -25,11 +24,12 @@ public class UserFacade {
 
   UserRepository userRepository;
   PasswordEncoder passwordEncoder;
+  LoggedUserGetter loggedUserGetter;
 
-  public UserDto registerUser(LoggedUserDto user) throws UserAlreadyExistsException, InvalidLoginException, InvalidPasswordException {
+  public UserDto registerUser(RegistrationRequest user) throws UserAlreadyExistsException, InvalidLoginException, InvalidPasswordException {
     Objects.requireNonNull(user);
-    checkIfUserRegistered(user.getLogin());
-    LoginAndPasswordVerifier.verifyRegisteredLogAndPass(user.getLogin(), user.getPassword());
+    checkIfUserAlreadyExists(user.getUsername());
+    LoginAndPasswordVerifier.verifyRegisteredLogAndPass(user.getUsername(), user.getPassword());
 
     return userRepository.save(createUser(user)).dto();
   }
@@ -40,25 +40,38 @@ public class UserFacade {
         .dto();
   }
 
-  public UserDto getLoggedUserName() {
-    return userRepository.findUserByLogin(LoggedUserGetter.getLoggedUserName())
-        .orElseThrow(() -> new UsernameNotFoundException("Can not find user"))
+  public UserDto getLoggedUser()  {
+    return userRepository.findUserByLogin(loggedUserGetter.getLoggedUserName())
+        .orElseThrow(() -> new UsernameNotFoundException("Can not find logged in user"))
         .dto();
   }
 
-  private void checkIfUserRegistered(String login) throws UserAlreadyExistsException {
+  public boolean isAdminOrRegistered(UserDto user) {
+    return isAdmin(user) || isRegistered(user);
+  }
+
+  public boolean isAdmin(UserDto user) {
+    return UserStatusDto.ADMIN.equals(user.getStatus());
+  }
+
+  private boolean isRegistered(UserDto user) {
+    return UserStatusDto.REGISTERED.equals(user.getStatus());
+  }
+
+  private void checkIfUserAlreadyExists(String login) throws UserAlreadyExistsException {
     Optional<User> savedUser = userRepository.findUserByLogin(login);
     if(savedUser.isPresent()) {
       throw new UserAlreadyExistsException("Such user is already registered");
     }
   }
 
-  private User createUser(LoggedUserDto user) {
+  private User createUser(RegistrationRequest user) {
     return User.builder()
-        .login(user.getLogin())
+        .login(user.getUsername())
         .password(passwordEncoder.encode(user.getPassword()))
         .status(UserStatusDto.REGISTERED)
         .registeredOn(LocalDateTime.now())
+        .email(user.getEmail())
         .build();
   }
 }
