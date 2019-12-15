@@ -1,5 +1,8 @@
 package com.kamilmarnik.talkerr.logic.errors;
 
+import com.kamilmarnik.talkerr.comment.exception.CommentNotFoundException;
+import com.kamilmarnik.talkerr.comment.exception.InvalidCommentContentException;
+import com.kamilmarnik.talkerr.post.exception.InvalidPostContentException;
 import com.kamilmarnik.talkerr.post.exception.PostNotFoundException;
 import com.kamilmarnik.talkerr.topic.exception.InvalidTopicContentException;
 import com.kamilmarnik.talkerr.topic.exception.TopicAlreadyExistsException;
@@ -65,6 +68,21 @@ class ErrorAdvice {
 
   @ExceptionHandler(InvalidTopicContentException.class)
   public ResponseEntity<ErrorResponse> handleException(InvalidTopicContentException e) {
+    return error(HttpStatus.BAD_REQUEST, e);
+  }
+
+  @ExceptionHandler(CommentNotFoundException.class)
+  public ResponseEntity<ErrorResponse> handleException(CommentNotFoundException e) {
+    return error(HttpStatus.NOT_FOUND, e);
+  }
+
+  @ExceptionHandler(InvalidPostContentException.class)
+  public ResponseEntity<ErrorResponse> handleException(InvalidPostContentException e) {
+    return error(HttpStatus.BAD_REQUEST, e);
+  }
+
+  @ExceptionHandler(InvalidCommentContentException.class)
+  public ResponseEntity<ErrorResponse> handleException(InvalidCommentContentException e) {
     return error(HttpStatus.BAD_REQUEST, e);
   }
 
