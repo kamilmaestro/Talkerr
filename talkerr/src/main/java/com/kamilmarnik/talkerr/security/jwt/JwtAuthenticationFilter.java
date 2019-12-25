@@ -1,10 +1,12 @@
 package com.kamilmarnik.talkerr.security.jwt;
 
-import com.google.common.base.Strings;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,50 +21,53 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class JwtTokenVerifier extends OncePerRequestFilter {
-  private final SecretKey secretKey;
-  private final JwtConfig jwtConfig;
-
-  public JwtTokenVerifier(SecretKey secretKey, JwtConfig jwtConfig) {
-    this.secretKey = secretKey;
-    this.jwtConfig = jwtConfig;
-  }
-
-
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+  SecretKey secretKey;
+  JwtConfig jwtConfig;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-    String authorizationHeader = request.getHeader(jwtConfig.getAuthorizationHeader());
-
-    if(Strings.isNullOrEmpty(authorizationHeader) || !authorizationHeader.startsWith(jwtConfig.getTokenPrefix())) {
+    Optional<String> token = getToken(request.getHeader(JwtConfig.AUTHORIZATION_HEADER));
+    if (!token.isPresent()) {
       filterChain.doFilter(request, response);
       return;
     }
-    String token = authorizationHeader.replaceFirst(jwtConfig.getTokenPrefix(), "");
 
     try {
       Jws<Claims> claimsJws = Jwts.parser()
           .setSigningKey(secretKey)
-          .parseClaimsJws(token);
+          .parseClaimsJws(token.get());
 
       Claims body = claimsJws.getBody();
-      String username = body.getSubject();
-      List<Map<String, String>> authorities = (List<Map<String, String>>) body.get("authorities"); //var authorities = ...
-      Set<SimpleGrantedAuthority> simpleGrantedAuthorities = authorities.stream()
-          .map(auth -> new SimpleGrantedAuthority(auth.get("authority")))
-          .collect(Collectors.toSet());
-
       Authentication authentication = new UsernamePasswordAuthenticationToken(
-          username, null, simpleGrantedAuthorities
+          body.getSubject(), null, getSimpleGrantedAuthorities(body)
       );
+
       SecurityContextHolder.getContext().setAuthentication(authentication);
     } catch (JwtException e) {
-      throw new IllegalStateException(String.format("Token %s cannot be trusted", token));
+      throw new IllegalStateException("Can not authenticate");
     }
 
     filterChain.doFilter(request, response);
+  }
+
+  private Optional<String> getToken(final String authorizationHeader) {
+    return Optional.ofNullable(authorizationHeader)
+        .filter(header -> !header.isEmpty() && header.startsWith(jwtConfig.getTokenPrefix()))
+        .map(header -> header.replaceFirst(jwtConfig.getTokenPrefix(), ""));
+  }
+
+  private Set<SimpleGrantedAuthority> getSimpleGrantedAuthorities(Claims body) {
+    List<Map<String, String>> authorities = (List<Map<String, String>>) body.get(JwtConfig.AUTHORITIES);
+
+    return authorities.stream()
+        .map(auth -> new SimpleGrantedAuthority(auth.get(JwtConfig.AUTHORITY)))
+        .collect(Collectors.toSet());
   }
 }

@@ -1,8 +1,8 @@
 package com.kamilmarnik.talkerr.security;
 
+import com.kamilmarnik.talkerr.security.jwt.JwtAuthenticationFilter;
 import com.kamilmarnik.talkerr.security.jwt.JwtConfig;
-import com.kamilmarnik.talkerr.security.jwt.JwtTokenVerifier;
-import com.kamilmarnik.talkerr.security.jwt.JwtUsernameAndPasswordAuthFilter;
+import com.kamilmarnik.talkerr.security.jwt.JwtLoginAuthenticationFilter;
 import com.kamilmarnik.talkerr.user.domain.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -40,8 +40,8 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         .csrf().disable()
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
-        .addFilter(new JwtUsernameAndPasswordAuthFilter(authenticationManager(), jwtConfig, secretKey))
-        .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig), JwtUsernameAndPasswordAuthFilter.class)
+        .addFilter(new JwtLoginAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
+        .addFilterAfter(new JwtAuthenticationFilter(secretKey, jwtConfig), JwtLoginAuthenticationFilter.class)
         .authorizeRequests()
         .anyRequest()
         .authenticated();
