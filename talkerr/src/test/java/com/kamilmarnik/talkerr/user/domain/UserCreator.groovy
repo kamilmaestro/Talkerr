@@ -1,6 +1,6 @@
 package com.kamilmarnik.talkerr.user.domain
 
-import com.kamilmarnik.talkerr.user.dto.RegistrationRequest
+import com.kamilmarnik.talkerr.security.auth.requests.RegistrationRequest
 import com.kamilmarnik.talkerr.user.dto.UserDto
 import com.kamilmarnik.talkerr.user.dto.UserStatusDto
 
