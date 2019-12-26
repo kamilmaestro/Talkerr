@@ -9,7 +9,6 @@ import com.kamilmarnik.talkerr.post.dto.PostDto;
 import com.kamilmarnik.talkerr.post.exception.PostNotFoundException;
 import com.kamilmarnik.talkerr.user.domain.UserFacade;
 import com.kamilmarnik.talkerr.user.dto.UserDto;
-import com.kamilmarnik.talkerr.user.dto.UserStatusDto;
 import com.kamilmarnik.talkerr.user.exception.UserRoleException;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -30,7 +29,7 @@ public class PostFacade {
   CommentFacade commentFacade;
 
   public PostDto addPost(CreatePostDto post) throws UserRoleException {
-    UserDto user = userFacade.getLoggedUser();
+    final UserDto user = userFacade.getLoggedUser();
     checkIfUserCanAddPost(user);
 
     return postRepository.save(Post.fromDto(createPost(post, user.getUserId()))).dto();
@@ -43,10 +42,9 @@ public class PostFacade {
   }
 
   public void deletePost(long postId) throws PostNotFoundException {
-    UserDto user = userFacade.getLoggedUser();
-    PostDto post = getPost(postId);
+    final UserDto user = userFacade.getLoggedUser();
 
-    if(canUserDeletePost(post, user)) {
+    if (canUserDeletePost(postId, user)) {
       postRepository.deleteById(postId);
       commentFacade.deleteCommentsByPostId(postId);
     }
@@ -66,19 +64,20 @@ public class PostFacade {
   }
 
   public void deletePostsByTopicId(long topicId) {
-    Set<Long> postsIds = postRepository.findPostsIdsByTopicId(topicId);
+    final Set<Long> postsIds = postRepository.findPostsIdsByTopicId(topicId);
     postRepository.deletePostsByTopicId(topicId);
     commentFacade.deleteCommentsByPostIdIn(postsIds);
   }
 
   private void checkIfUserCanAddPost(UserDto user) throws UserRoleException {
-    if(!userFacade.isAdminOrRegistered(user)) {
+    if (!userFacade.isAdminOrRegistered(user)) {
       throw new UserRoleException("User with username: " + user.getLogin() + " does not have a permission to add a new post");
     }
   }
 
-  private boolean canUserDeletePost(PostDto post, UserDto user) {
-    return post.getAuthorId() == user.getUserId() || user.getStatus().equals(UserStatusDto.ADMIN);
+  private boolean canUserDeletePost(long postId, UserDto user) throws PostNotFoundException {
+    final PostDto post = getPost(postId);
+    return post.getAuthorId() == user.getUserId() || userFacade.isAdmin(user);
   }
 
   private PostDto createPost(CreatePostDto post, long authorId) {

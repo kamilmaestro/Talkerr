@@ -1,6 +1,9 @@
 package com.kamilmarnik.talkerr.comment.exception;
 
-public class InvalidCommentContentException extends Exception {
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
+public class InvalidCommentContentException extends RuntimeException {
   public InvalidCommentContentException(String message) {
     super(message);
   }

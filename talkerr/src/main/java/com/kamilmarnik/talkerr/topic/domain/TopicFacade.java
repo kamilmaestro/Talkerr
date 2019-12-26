@@ -5,7 +5,6 @@ import com.kamilmarnik.talkerr.post.dto.CreatePostDto;
 import com.kamilmarnik.talkerr.post.dto.PostDto;
 import com.kamilmarnik.talkerr.topic.dto.CreateTopicDto;
 import com.kamilmarnik.talkerr.topic.dto.TopicDto;
-import com.kamilmarnik.talkerr.topic.exception.InvalidTopicContentException;
 import com.kamilmarnik.talkerr.topic.exception.TopicAlreadyExistsException;
 import com.kamilmarnik.talkerr.topic.exception.TopicNotFoundException;
 import com.kamilmarnik.talkerr.user.domain.UserFacade;
@@ -29,8 +28,8 @@ public class TopicFacade {
   UserFacade userFacade;
   PostFacade postFacade;
 
-  public TopicDto addTopic(CreateTopicDto topic) throws UserRoleException, TopicAlreadyExistsException, InvalidTopicContentException {
-    UserDto user = userFacade.getLoggedUser();
+  public TopicDto addTopic(CreateTopicDto topic) throws UserRoleException, TopicAlreadyExistsException {
+    final UserDto user = userFacade.getLoggedUser();
     checkIfUserCanAddTopic(user, topic);
 
     return topicRepository.save(Topic.fromDto(createTopic(topic, user.getUserId()))).dto();
@@ -56,36 +55,27 @@ public class TopicFacade {
   }
 
   public void deleteTopic(long topicId) throws TopicNotFoundException {
-    UserDto loggedUser = userFacade.getLoggedUser();
+    final UserDto loggedUser = userFacade.getLoggedUser();
     getTopic(topicId);
 
-    if(userFacade.isAdmin(loggedUser)) {
+    if (userFacade.isAdmin(loggedUser)) {
       topicRepository.deleteById(topicId);
       postFacade.deletePostsByTopicId(topicId);
     }
   }
 
-  private void checkIfUserCanAddTopic(UserDto user, CreateTopicDto topic) throws UserRoleException, TopicAlreadyExistsException, InvalidTopicContentException {
+  private void checkIfUserCanAddTopic(UserDto user, CreateTopicDto topic) throws UserRoleException, TopicAlreadyExistsException {
     Objects.requireNonNull(topic, "Topic can not be created due to invalid data");
     checkIfTopicAlreadyExists(topic);
-    checkTopicContent(topic);
-    if(!userFacade.isAdmin(user)) {
+    if (!userFacade.isAdmin(user)) {
       throw new UserRoleException("User with username: " + user.getLogin() + " does not have a permission to add a new topic");
     }
   }
 
   private void checkIfTopicAlreadyExists(CreateTopicDto topic) throws TopicAlreadyExistsException {
-    Optional<Topic> foundTopic = topicRepository.findByName(topic.getName());
-    if(foundTopic.isPresent()) {
+    final Optional<Topic> foundTopic = topicRepository.findByName(topic.getName());
+    if (foundTopic.isPresent()) {
       throw new TopicAlreadyExistsException("Topic: " + topic.getName() + " already exists!");
-    }
-  }
-
-  private void checkTopicContent(CreateTopicDto topic) throws InvalidTopicContentException {
-    if(topic.getName().length() > TopicDto.MAX_NAME_LENGTH) {
-      throw new InvalidTopicContentException("Invalid length of name of topic");
-    } else if(topic.getDescription().length() > TopicDto.MAX_DESCRIPTION_LENGTH) {
-      throw new InvalidTopicContentException("Invalid length of description of topic");
     }
   }
 

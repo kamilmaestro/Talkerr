@@ -5,7 +5,6 @@ import com.kamilmarnik.talkerr.post.dto.PostDto;
 import com.kamilmarnik.talkerr.topic.domain.TopicFacade;
 import com.kamilmarnik.talkerr.topic.dto.CreateTopicDto;
 import com.kamilmarnik.talkerr.topic.dto.TopicDto;
-import com.kamilmarnik.talkerr.topic.exception.InvalidTopicContentException;
 import com.kamilmarnik.talkerr.topic.exception.TopicAlreadyExistsException;
 import com.kamilmarnik.talkerr.topic.exception.TopicNotFoundException;
 import com.kamilmarnik.talkerr.user.exception.UserRoleException;
@@ -39,7 +38,7 @@ public class TopicController {
   }
 
   @PostMapping("/")
-  ResponseEntity<TopicDto> addTopic(@RequestBody CreateTopicDto createTopic) throws InvalidTopicContentException, UserRoleException, TopicAlreadyExistsException {
+  ResponseEntity<TopicDto> addTopic(@RequestBody CreateTopicDto createTopic) throws UserRoleException, TopicAlreadyExistsException {
     TopicDto topic = topicFacade.addTopic(createTopic);
 
     return ResponseEntity.ok(topic);

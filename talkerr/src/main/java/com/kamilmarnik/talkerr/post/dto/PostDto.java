@@ -14,6 +14,8 @@ import java.util.Optional;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Getter
 public final class PostDto {
+  public static final int MAX_CONTENT_LENGTH = 1000;
+
   Long postId;
   String content;
   LocalDateTime createdOn;
@@ -25,12 +27,11 @@ public final class PostDto {
   }
 
   private static class PostDtoVerifier extends PostDtoBuilder {
-
     @Override
     public PostDto build() {
       Optional.ofNullable(super.content)
-          .filter(StringUtils::isNotBlank)
-          .orElseThrow(() -> new InvalidPostContentException("Can add post with content: " + super.content));
+          .filter(c -> StringUtils.isNotBlank(c) && c.length() <= MAX_CONTENT_LENGTH)
+          .orElseThrow(InvalidPostContentException::new);
 
       return super.build();
     }
