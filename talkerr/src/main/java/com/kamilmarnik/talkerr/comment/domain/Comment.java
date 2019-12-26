@@ -1,6 +1,7 @@
 package com.kamilmarnik.talkerr.comment.domain;
 
 import com.kamilmarnik.talkerr.comment.dto.CommentDto;
+import com.kamilmarnik.talkerr.user.dto.UserDto;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -39,6 +40,11 @@ class Comment {
   @Column(name = "author_id")
   Long authorId;
 
+  @Getter
+  @NotNull
+  @Column(name = "author_login", length = UserDto.MAX_LOG_LEN)
+  String authorLogin;
+
   static Comment fromDto(CommentDto dto) {
     return Comment.builder()
         .commentId(dto.getCommentId())
@@ -46,6 +52,7 @@ class Comment {
         .createdOn(dto.getCreatedOn())
         .postId(dto.getPostId())
         .authorId(dto.getAuthorId())
+        .authorLogin(dto.getAuthorLogin())
         .build();
   }
 
@@ -56,6 +63,7 @@ class Comment {
         .createdOn(createdOn)
         .postId(postId)
         .authorId(authorId)
+        .authorLogin(authorLogin)
         .build();
   }
 }

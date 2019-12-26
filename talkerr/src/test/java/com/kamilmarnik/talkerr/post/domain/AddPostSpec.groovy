@@ -24,6 +24,8 @@ class AddPostSpec extends PostSpec {
             savedPost.postId == post.postId
         and: "content is proper"
             savedPost.content == post.content
+        and: "logged user is an author"
+            savedPost.authorLogin == post.authorLogin
     }
 
     def "guest can not add a new post" () {

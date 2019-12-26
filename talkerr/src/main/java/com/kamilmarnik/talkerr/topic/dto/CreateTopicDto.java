@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class CreateTopicDto {
+public final class CreateTopicDto {
   String name;
   String description;
 }

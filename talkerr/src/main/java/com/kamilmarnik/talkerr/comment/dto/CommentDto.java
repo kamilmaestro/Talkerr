@@ -13,7 +13,7 @@ import java.util.Optional;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Getter
-public class CommentDto {
+public final class CommentDto {
   public static final int MAX_CONTENT_LENGTH = 500;
 
   long commentId;
@@ -21,6 +21,7 @@ public class CommentDto {
   LocalDateTime createdOn;
   long postId;
   long authorId;
+  String authorLogin;
 
   public static CommentDtoBuilder builder() {
     return new CommentDtoVerifier();

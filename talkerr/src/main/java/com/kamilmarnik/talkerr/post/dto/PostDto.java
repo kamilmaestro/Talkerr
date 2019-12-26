@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-@Builder(toBuilder = true)
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Getter
 public final class PostDto {
@@ -21,6 +21,7 @@ public final class PostDto {
   LocalDateTime createdOn;
   long authorId;
   long topicId;
+  String authorLogin;
 
   public static PostDtoBuilder builder() {
     return new PostDtoVerifier();

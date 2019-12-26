@@ -32,7 +32,7 @@ public class PostFacade {
     final UserDto user = userFacade.getLoggedUser();
     checkIfUserCanAddPost(user);
 
-    return postRepository.save(Post.fromDto(createPost(post, user.getUserId()))).dto();
+    return postRepository.save(Post.fromDto(createPost(post, user))).dto();
   }
 
   public PostDto getPost(long postId) throws PostNotFoundException {
@@ -80,12 +80,13 @@ public class PostFacade {
     return post.getAuthorId() == user.getUserId() || userFacade.isAdmin(user);
   }
 
-  private PostDto createPost(CreatePostDto post, long authorId) {
+  private PostDto createPost(CreatePostDto post, UserDto author) {
     return PostDto.builder()
         .content(post.getContent())
         .createdOn(LocalDateTime.now())
-        .authorId(authorId)
+        .authorId(author.getUserId())
         .topicId(post.getTopicId())
+        .authorLogin(author.getLogin())
         .build();
   }
 }
