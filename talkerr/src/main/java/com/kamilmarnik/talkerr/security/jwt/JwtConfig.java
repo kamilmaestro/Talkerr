@@ -1,15 +1,21 @@
 package com.kamilmarnik.talkerr.security.jwt;
 
-import com.google.common.net.HttpHeaders;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @ConfigurationProperties(prefix = "application.jwt")
 public class JwtConfig {
-  private String secretKey;
-  private String tokenPrefix;
-  private int tokenExpirationAfterHours;
+  final static String AUTHORITIES = "authorities";
+  final static String AUTHORITY = "authority";
+  final static String AUTHORIZATION_HEADER = "Authorization";
+
+  String secretKey;
+  String tokenPrefix;
+  int tokenExpirationAfterMinutes;
 
   public JwtConfig() {
   }
@@ -30,15 +36,11 @@ public class JwtConfig {
     this.tokenPrefix = tokenPrefix;
   }
 
-  public int getTokenExpirationAfterHours() {
-    return tokenExpirationAfterHours;
+  public int getTokenExpirationAfterMinutes() {
+    return tokenExpirationAfterMinutes;
   }
 
-  public void setTokenExpirationAfterHours(int tokenExpirationAfterHours) {
-    this.tokenExpirationAfterHours = tokenExpirationAfterHours;
-  }
-
-  public String getAuthorizationHeader() {
-    return HttpHeaders.AUTHORIZATION;
+  public void setTokenExpirationAfterMinutes(int tokenExpirationAfterMinutes) {
+    this.tokenExpirationAfterMinutes = tokenExpirationAfterMinutes;
   }
 }
