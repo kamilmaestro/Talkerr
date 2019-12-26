@@ -40,6 +40,7 @@ class AuthController {
         .userName(user.getUsername())
         .build();
     mailSender.sendMail(user.getEmail());
+
     return ResponseEntity.ok(registeredUser);
   }
 }
