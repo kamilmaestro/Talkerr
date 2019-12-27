@@ -1,7 +1,11 @@
 package com.kamilmarnik.talkerr.logic.errors;
 
+import com.kamilmarnik.talkerr.comment.exception.CommentNotFoundException;
+import com.kamilmarnik.talkerr.comment.exception.InvalidCommentContentException;
+import com.kamilmarnik.talkerr.post.exception.InvalidPostContentException;
 import com.kamilmarnik.talkerr.post.exception.PostNotFoundException;
-import com.kamilmarnik.talkerr.topic.exception.InvalidTopicContentException;
+import com.kamilmarnik.talkerr.topic.exception.InvalidTopicDescriptionException;
+import com.kamilmarnik.talkerr.topic.exception.InvalidTopicNameException;
 import com.kamilmarnik.talkerr.topic.exception.TopicAlreadyExistsException;
 import com.kamilmarnik.talkerr.topic.exception.TopicNotFoundException;
 import com.kamilmarnik.talkerr.user.exception.InvalidLoginException;
@@ -10,6 +14,7 @@ import com.kamilmarnik.talkerr.user.exception.LoggedUserNotFoundException;
 import com.kamilmarnik.talkerr.user.exception.UserAlreadyExistsException;
 import com.kamilmarnik.talkerr.user.exception.UserNotFoundException;
 import com.kamilmarnik.talkerr.user.exception.UserRoleException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -63,13 +68,33 @@ class ErrorAdvice {
     return error(HttpStatus.BAD_REQUEST, e);
   }
 
-  @ExceptionHandler(InvalidTopicContentException.class)
-  public ResponseEntity<ErrorResponse> handleException(InvalidTopicContentException e) {
+  @ExceptionHandler(InvalidTopicNameException.class)
+  public ResponseEntity<ErrorResponse> handleException(InvalidTopicNameException e) {
+    return error(HttpStatus.BAD_REQUEST, e);
+  }
+
+  @ExceptionHandler(InvalidTopicDescriptionException.class)
+  public ResponseEntity<ErrorResponse> handleException(InvalidTopicDescriptionException e) {
+    return error(HttpStatus.BAD_REQUEST, e);
+  }
+
+  @ExceptionHandler(CommentNotFoundException.class)
+  public ResponseEntity<ErrorResponse> handleException(CommentNotFoundException e) {
+    return error(HttpStatus.NOT_FOUND, e);
+  }
+
+  @ExceptionHandler(InvalidPostContentException.class)
+  public ResponseEntity<ErrorResponse> handleException(InvalidPostContentException e) {
+    return error(HttpStatus.BAD_REQUEST, e);
+  }
+
+  @ExceptionHandler(InvalidCommentContentException.class)
+  public ResponseEntity<ErrorResponse> handleException(InvalidCommentContentException e) {
     return error(HttpStatus.BAD_REQUEST, e);
   }
 
   private ResponseEntity<ErrorResponse> error(HttpStatus status, Exception e) {
-    return ResponseEntity.status(status).body(e.getMessage() == null ?
+    return ResponseEntity.status(status).body(StringUtils.isBlank(e.getMessage()) ?
         new ErrorResponse(status, e.getClass().getSimpleName()) :
         new ErrorResponse(status, e.getClass().getSimpleName(), e.getMessage()));
   }

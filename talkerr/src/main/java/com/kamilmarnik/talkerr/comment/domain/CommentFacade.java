@@ -7,16 +7,13 @@ import com.kamilmarnik.talkerr.comment.exception.InvalidCommentContentException;
 import com.kamilmarnik.talkerr.post.domain.PostFacade;
 import com.kamilmarnik.talkerr.user.domain.UserFacade;
 import com.kamilmarnik.talkerr.user.dto.UserDto;
-import com.kamilmarnik.talkerr.user.dto.UserStatusDto;
 import com.kamilmarnik.talkerr.user.exception.UserRoleException;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.experimental.FieldDefaults;
-import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,16 +32,15 @@ public class CommentFacade {
   }
 
   public CommentDto addComment(CreateCommentDto comment) throws UserRoleException, InvalidCommentContentException {
-    UserDto loggedUser = userFacade.getLoggedUser();
-    checkCommentContent(comment.getContent());
+    final UserDto loggedUser = userFacade.getLoggedUser();
     checkIfUserCanAddComment(loggedUser);
 
     return commentRepository.save(Comment.fromDto(createComment(comment, loggedUser.getUserId()))).dto();
   }
 
   public void deleteComment(long commentId) throws CommentNotFoundException {
-    UserDto loggedUser = userFacade.getLoggedUser();
-    if(canUserDeleteComment(commentId, loggedUser)) {
+    final UserDto loggedUser = userFacade.getLoggedUser();
+    if (canUserDeleteComment(commentId, loggedUser)) {
       commentRepository.deleteById(commentId);
     }
   }
@@ -62,20 +58,14 @@ public class CommentFacade {
     commentRepository.deleteCommentsByPostIdIn(postsIds);
   }
 
-  private void checkCommentContent(String commentContent) throws InvalidCommentContentException {
-    Optional.ofNullable(commentContent)
-        .filter(StringUtils::isNotBlank)
-        .orElseThrow(() -> new InvalidCommentContentException("Can add comment with such content: " + commentContent));
-  }
-
   private void checkIfUserCanAddComment(UserDto user) throws UserRoleException {
-    if(user.getStatus() != UserStatusDto.REGISTERED && user.getStatus() != UserStatusDto.ADMIN) {
+    if (!userFacade.isAdminOrRegistered(user)) {
       throw new UserRoleException("User with username: " + user.getLogin() + " does not have a permission to add a new comment");
     }
   }
 
   private boolean canUserDeleteComment(long commentId, UserDto user) throws CommentNotFoundException {
-    CommentDto comment = getComment(commentId);
+    final CommentDto comment = getComment(commentId);
     return user.getUserId() == comment.getAuthorId() && userFacade.isAdminOrRegistered(user);
   }
 

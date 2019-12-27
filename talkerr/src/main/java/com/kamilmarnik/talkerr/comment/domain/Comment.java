@@ -23,7 +23,7 @@ class Comment {
   Long commentId;
 
   @NotNull
-  @Column(name = "content")
+  @Column(name = "content", length = CommentDto.MAX_CONTENT_LENGTH)
   String content;
 
   @Column(name = "created_on", columnDefinition = "TIMESTAMP WITH TIME ZONE NOT NULL")

@@ -23,7 +23,7 @@ class Post {
   Long postId;
 
   @NotNull
-  @Column(name = "content")
+  @Column(name = "content", length = PostDto.MAX_CONTENT_LENGTH)
   String content;
 
   @NotNull
