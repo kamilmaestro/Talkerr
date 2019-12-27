@@ -14,7 +14,7 @@ import java.util.Optional;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Getter
 public final class CommentDto {
-  public static final int MAX_CONTENT_LENGTH = 500;
+  public static final int MAX_CONTENT_LENGTH = 1500;
 
   long commentId;
   String content;

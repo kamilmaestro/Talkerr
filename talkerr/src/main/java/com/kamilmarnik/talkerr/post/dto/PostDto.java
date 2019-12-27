@@ -14,7 +14,7 @@ import java.util.Optional;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Getter
 public final class PostDto {
-  public static final int MAX_CONTENT_LENGTH = 1000;
+  public static final int MAX_CONTENT_LENGTH = 2000;
 
   Long postId;
   String content;
