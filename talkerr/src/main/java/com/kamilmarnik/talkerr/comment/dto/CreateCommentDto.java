@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Getter
-public class CreateCommentDto {
+public final class CreateCommentDto {
   String content;
   long postId;
 }

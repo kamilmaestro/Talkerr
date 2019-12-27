@@ -14,7 +14,7 @@ import java.util.Optional;
 @Builder
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class TopicDto {
+public final class TopicDto {
   public static final int MAX_NAME_LENGTH = 30;
   public static final int MAX_DESCRIPTION_LENGTH = 100;
 

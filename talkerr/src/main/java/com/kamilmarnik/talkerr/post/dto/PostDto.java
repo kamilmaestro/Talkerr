@@ -10,17 +10,18 @@ import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-@Builder(toBuilder = true)
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Getter
 public final class PostDto {
-  public static final int MAX_CONTENT_LENGTH = 1000;
+  public static final int MAX_CONTENT_LENGTH = 2000;
 
   Long postId;
   String content;
   LocalDateTime createdOn;
   long authorId;
   long topicId;
+  String authorLogin;
 
   public static PostDtoBuilder builder() {
     return new PostDtoVerifier();

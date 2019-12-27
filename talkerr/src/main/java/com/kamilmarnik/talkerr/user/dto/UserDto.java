@@ -7,10 +7,10 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 
-@Builder(toBuilder = true)
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Getter
-public class UserDto {
+public final class UserDto {
   public static final int MAX_LOG_LEN = 20;
   public static final int MIN_LOG_LEN = 4;
   public static final int MAX_PASS_LEN = 60;
@@ -21,8 +21,4 @@ public class UserDto {
   UserStatusDto status;
   LocalDateTime registeredOn;
   String email;
-
-  public boolean exists() {
-    return userId != null && login != null && status != null && registeredOn != null;
-  }
 }

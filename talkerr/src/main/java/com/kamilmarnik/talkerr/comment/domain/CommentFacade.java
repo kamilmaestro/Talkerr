@@ -35,7 +35,7 @@ public class CommentFacade {
     final UserDto loggedUser = userFacade.getLoggedUser();
     checkIfUserCanAddComment(loggedUser);
 
-    return commentRepository.save(Comment.fromDto(createComment(comment, loggedUser.getUserId()))).dto();
+    return commentRepository.save(Comment.fromDto(createComment(comment, loggedUser))).dto();
   }
 
   public void deleteComment(long commentId) throws CommentNotFoundException {
@@ -69,12 +69,13 @@ public class CommentFacade {
     return user.getUserId() == comment.getAuthorId() && userFacade.isAdminOrRegistered(user);
   }
 
-  private CommentDto createComment(CreateCommentDto comment, long authorId) {
+  private CommentDto createComment(CreateCommentDto comment, UserDto author) {
     return CommentDto.builder()
         .content(comment.getContent())
         .createdOn(LocalDateTime.now())
         .postId(comment.getPostId())
-        .authorId(authorId)
+        .authorId(author.getUserId())
+        .authorLogin(author.getLogin())
         .build();
   }
 }

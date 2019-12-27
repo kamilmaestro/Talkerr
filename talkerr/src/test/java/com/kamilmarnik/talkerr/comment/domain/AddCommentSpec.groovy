@@ -24,6 +24,8 @@ class AddCommentSpec extends CommentSpec {
             savedComment.commentId == comment.commentId
         and: "it is created by logged in user"
             savedComment.authorId == comment.authorId
+        and: "login of author is proper"
+            savedComment.authorLogin == comment.authorLogin
     }
 
     def "user should not be able to create a new comment with wrong content" () {
