@@ -1,47 +1,81 @@
 package com.kamilmarnik.talkerr.mail;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.experimental.FieldDefaults;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@Builder
+@Component
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@ConfigurationProperties(prefix = "application.mail")
 public class MailSender {
-  String userMail;
-  String password;
-  String userName;
 
-  public void sendMail(String mailTo) {
+  String mail;
+  String password;
+
+  public MailSender() {}
+
+  public void sendRegistrationConfirmationMail(String mailTo, String userName) {
+    Properties prop = createProperties();
+    Session session = authenticate(prop);
+
+    try {
+      Transport.send(createMessage(mailTo, userName, session));
+    } catch (MessagingException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private Properties createProperties() {
     Properties prop = new Properties();
     prop.put("mail.smtp.host", "smtp.gmail.com");
     prop.put("mail.smtp.port", "587");
     prop.put("mail.smtp.auth", "true");
     prop.put("mail.smtp.starttls.enable", "true");
 
-    Session session = Session.getInstance(prop,
+    return prop;
+  }
+
+  private Session authenticate(Properties prop) {
+    return Session.getInstance(prop,
         new javax.mail.Authenticator() {
           protected PasswordAuthentication getPasswordAuthentication() {
-            return new PasswordAuthentication(userMail, password);
+            return new PasswordAuthentication(mail, password);
           }
         });
+  }
 
-    try {
-      Message message = new MimeMessage(session);
-      message.setFrom(new InternetAddress(userMail));
-      message.setRecipients(
-          Message.RecipientType.TO,
-          InternetAddress.parse(mailTo)
-      );
-      message.setSubject("Talkerr says hello!");
-      message.setText("Thank you for registration " + userName + "! You are now a part of Talkerr community");
-      Transport.send(message);
-    } catch (MessagingException e) {
-      e.printStackTrace();
-    }
+  private Message createMessage(String mailTo, String userName, Session session) throws MessagingException {
+    Message message = new MimeMessage(session);
+    message.setFrom(new InternetAddress(mail));
+    message.setRecipients(
+        Message.RecipientType.TO,
+        InternetAddress.parse(mailTo)
+    );
+    message.setSubject("Talkerr says hello!");
+    message.setText("Thank you for registration " + userName + "! You are now a part of Talkerr community.");
+
+    return message;
+  }
+
+  public String getMail() {
+    return mail;
+  }
+
+  public void setMail(String mail) {
+    this.mail = mail;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
   }
 }

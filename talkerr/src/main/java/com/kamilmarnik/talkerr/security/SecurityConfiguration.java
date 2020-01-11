@@ -1,7 +1,10 @@
 package com.kamilmarnik.talkerr.security;
 
+import com.kamilmarnik.talkerr.security.jwt.JwtAuthenticationFilter;
+import com.kamilmarnik.talkerr.security.jwt.JwtConfig;
+import com.kamilmarnik.talkerr.security.jwt.JwtLoginAuthenticationFilter;
 import com.kamilmarnik.talkerr.user.domain.UserDetailsServiceImpl;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -9,29 +12,46 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import javax.crypto.SecretKey;
 
 @Configuration
 @EnableWebSecurity
 class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-  @Bean
-  public UserDetailsService userDetailsService() {
-    return new UserDetailsServiceImpl();
+  private final PasswordEncoder passwordEncoder;
+  private final UserDetailsServiceImpl userDetailsService;
+  private final SecretKey secretKey;
+  private final JwtConfig jwtConfig;
+
+  @Autowired
+  public SecurityConfiguration(PasswordEncoder passwordEncoder, UserDetailsServiceImpl userDetailsService, SecretKey secretKey, JwtConfig jwtConfig) {
+    this.passwordEncoder = passwordEncoder;
+    this.userDetailsService = userDetailsService;
+    this.secretKey = secretKey;
+    this.jwtConfig = jwtConfig;
   }
 
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
+    http
+        .csrf().disable()
+        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+        .addFilter(new JwtLoginAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
+        .addFilterAfter(new JwtAuthenticationFilter(secretKey, jwtConfig), JwtLoginAuthenticationFilter.class)
+        .authorizeRequests()
+        .anyRequest()
+        .authenticated();
   }
 
-  @Bean
-  public DaoAuthenticationProvider authenticationProvider() {
+  private DaoAuthenticationProvider authenticationProvider() {
     DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-    authProvider.setUserDetailsService(userDetailsService());
-    authProvider.setPasswordEncoder(passwordEncoder());
+    authProvider.setUserDetailsService(userDetailsService);
+    authProvider.setPasswordEncoder(passwordEncoder);
+
     return authProvider;
   }
 
@@ -41,20 +61,7 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   }
 
   @Override
-  protected void configure(HttpSecurity http) throws Exception {
-    http.httpBasic()
-        .and()
-        .authorizeRequests()
-        .anyRequest().authenticated()
-        .and()
-        .httpBasic()
-        .and()
-        .sessionManagement().disable()
-        .csrf().disable();
-  }
-
-  @Override
   public void configure(WebSecurity web) {
-    web.ignoring().antMatchers("/user/");
+    web.ignoring().antMatchers("/register");
   }
 }

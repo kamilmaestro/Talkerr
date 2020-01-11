@@ -1,7 +1,10 @@
 package com.kamilmarnik.talkerr.topic.domain
 
-import com.kamilmarnik.talkerr.topic.exception.InvalidTopicContentException
+import com.kamilmarnik.talkerr.topic.dto.TopicDto
+import com.kamilmarnik.talkerr.topic.exception.InvalidTopicDescriptionException
+import com.kamilmarnik.talkerr.topic.exception.InvalidTopicNameException
 import com.kamilmarnik.talkerr.user.exception.UserRoleException
+import org.apache.commons.text.RandomStringGenerator
 
 import static com.kamilmarnik.talkerr.topic.domain.TopicCreator.createNewTopic
 import static com.kamilmarnik.talkerr.user.domain.UserCreator.*
@@ -9,9 +12,11 @@ import static com.kamilmarnik.talkerr.user.domain.UserCreator.*
 class AddTopicSpec extends TopicSpec {
 
     def setup() {
-        def admin = createAdmin(userRepository)
-        def user = userFacade.registerUser(registerNewUser())
+        createAdmin(userRepository)
+        userFacade.registerUser(registerNewUser())
     }
+    private static String tooLongName = new RandomStringGenerator.Builder().build().generate(TopicDto.MAX_NAME_LENGTH + 1)
+    private static String tooLongDescription = new RandomStringGenerator.Builder().build().generate(TopicDto.MAX_DESCRIPTION_LENGTH + 1)
 
     def "admin should be able to add a new topic" () {
         given: "there is an admin"
@@ -49,12 +54,12 @@ class AddTopicSpec extends TopicSpec {
         then: "exception #excpected is thrown instead of creating a new topic"
             thrown(expected)
         where:
-            name        |   description     |   expected
-            longName    |   "Description"   |   InvalidTopicContentException.class
-            "Name"      |   longDescription |   InvalidTopicContentException.class
-            longName    |   longDescription |   InvalidTopicContentException.class
+            name        |   description        |   expected
+            tooLongName |   "Description"      |   InvalidTopicNameException.class
+            "Name"      |   tooLongDescription |   InvalidTopicDescriptionException.class
+            tooLongName |   tooLongDescription |   InvalidTopicNameException.class
+            null        |   "Description"      |   InvalidTopicNameException.class
+            "Name"      |   null               |   InvalidTopicDescriptionException.class
+            null        |   null               |   InvalidTopicNameException.class
     }
-
-    private static String longName = "Definitely too long!!!!!01234567899876543210"
-    private static String longDescription = "Definitely too long description!!!!!01234567899876543210012345678998765432100123456789987654321001234567899876543210"
 }

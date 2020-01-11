@@ -1,6 +1,7 @@
 package com.kamilmarnik.talkerr.post.domain;
 
 import com.kamilmarnik.talkerr.post.dto.PostDto;
+import com.kamilmarnik.talkerr.user.dto.UserDto;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -23,7 +24,7 @@ class Post {
   Long postId;
 
   @NotNull
-  @Column(name = "content")
+  @Column(name = "content", length = PostDto.MAX_CONTENT_LENGTH)
   String content;
 
   @NotNull
@@ -39,6 +40,11 @@ class Post {
   @Column(name = "topic_id")
   Long topicId;
 
+  @Getter
+  @NotNull
+  @Column(name = "author_login", length = UserDto.MAX_LOG_LEN)
+  String authorLogin;
+
   static Post fromDto(PostDto dto) {
     return Post.builder()
         .postId(dto.getPostId())
@@ -46,6 +52,7 @@ class Post {
         .createdOn(dto.getCreatedOn())
         .authorId(dto.getAuthorId())
         .topicId(dto.getTopicId())
+        .authorLogin(dto.getAuthorLogin())
         .build();
   }
 
@@ -56,6 +63,7 @@ class Post {
         .createdOn(createdOn)
         .authorId(authorId)
         .topicId(topicId)
+        .authorLogin(authorLogin)
         .build();
   }
 }

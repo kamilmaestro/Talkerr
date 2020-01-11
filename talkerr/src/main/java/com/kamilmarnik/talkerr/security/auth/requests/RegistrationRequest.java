@@ -1,4 +1,4 @@
-package com.kamilmarnik.talkerr.user.dto;
+package com.kamilmarnik.talkerr.security.auth.requests;
 
 import lombok.AccessLevel;
 import lombok.Builder;
