@@ -136,10 +136,10 @@ class InMemoryPostRepository implements PostRepository {
   }
 
   @Override
-  public Page<Post> findAllByTopicId(Pageable pageable, long topicId) {
-    return new PageImpl<>(values.values().stream()
+  public List<Post> findAllByTopicId(long topicId) {
+    return values.values().stream()
         .filter(post -> post.getTopicId() == topicId)
-        .collect(Collectors.toList()));
+        .collect(Collectors.toList());
   }
 
   @Override
