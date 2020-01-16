@@ -16,11 +16,11 @@ class GetPosts extends PostSpec {
             def post = postFacade.addPost(createNewPost(fstTopicId))
             def sndPost = postFacade.addPost(createNewPost(fstTopicId))
         when: "user asks for a page of posts"
-            def posts = postFacade.getPostsByTopicId(PAGEABLE, fstTopicId)
+            def posts = postFacade.getPostsByTopicId(fstTopicId)
         then: "he gets 2 posts"
-            posts.getContent().size() == 2
+            posts.size() == 2
         and: "posts are connected with topic"
-            posts.getContent().stream()
+            posts.stream()
                     .filter({ p -> p.getTopicId() == fstTopicId })
                     .count() == 2
     }
@@ -30,8 +30,8 @@ class GetPosts extends PostSpec {
             def post = postFacade.addPost(createNewPost(fstTopicId))
             def sndPost = postFacade.addPost(createNewPost(fstTopicId))
         when: "user asks for a page of posts created in second topic"
-            def posts = postFacade.getPostsByTopicId(PAGEABLE, sndTopicId)
+            def posts = postFacade.getPostsByTopicId(sndTopicId)
         then: "he gets an empty page"
-            posts.getContent().size() == 0
+            posts.size() == 0
     }
 }

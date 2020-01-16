@@ -11,10 +11,10 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/post")
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -44,8 +44,8 @@ class PostController {
   }
 
   @GetMapping("/topic/{topicId}")
-  public ResponseEntity<Page<PostDto>> getPostsByTopicId(@PathVariable long topicId, Pageable pageable) {
-    Page<PostDto> posts = postFacade.getPostsByTopicId(pageable, topicId);
+  public ResponseEntity<List<PostDto>> getPostsByTopicId(@PathVariable long topicId) {
+    List<PostDto> posts = postFacade.getPostsByTopicId(topicId);
 
     return ResponseEntity.ok(posts);
   }
