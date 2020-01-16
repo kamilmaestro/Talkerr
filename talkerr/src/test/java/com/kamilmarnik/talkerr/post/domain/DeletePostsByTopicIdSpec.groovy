@@ -18,6 +18,6 @@ class DeletePostsByTopicIdSpec extends PostSpec {
         when: "user deletes topic and wants to delete its posts"
             postFacade.deletePostsByTopicId(fstTopicId)
         then: "post are deleted as well"
-            postFacade.getPostsByTopicId(PAGEABLE, fstTopicId).isEmpty()
+            postFacade.getPostsByTopicId(fstTopicId).isEmpty()
     }
 }

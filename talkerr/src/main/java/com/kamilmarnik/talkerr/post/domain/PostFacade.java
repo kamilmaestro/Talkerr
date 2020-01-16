@@ -13,12 +13,12 @@ import com.kamilmarnik.talkerr.user.exception.UserRoleException;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -50,10 +50,10 @@ public class PostFacade {
     }
   }
 
-  public Page<PostDto> getPostsByTopicId(Pageable pageable, long topicId) {
-    Objects.requireNonNull(pageable, "Wrong page or size of list of posts");
-
-    return postRepository.findAllByTopicId(pageable, topicId).map(Post::dto);
+  public List<PostDto> getPostsByTopicId(long topicId) {
+    return postRepository.findAllByTopicId(topicId).stream()
+        .map(Post::dto)
+        .collect(Collectors.toList());
   }
 
   public CommentDto addCommentToPost(CreateCommentDto comment) throws UserRoleException, PostNotFoundException, InvalidCommentContentException {
