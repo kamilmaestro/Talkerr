@@ -29,7 +29,7 @@ public class UserFacade {
   public UserDto registerUser(RegistrationRequest user) throws UserAlreadyExistsException, InvalidLoginException, InvalidPasswordException {
     Objects.requireNonNull(user);
     checkIfUserAlreadyExists(user.getUsername());
-    LoginAndPasswordVerifier.verifyRegisteredLogAndPass(user.getUsername(), user.getPassword());
+    LoginAndPasswordVerifier.create(user.getUsername(), user.getPassword()).verify();
 
     return userRepository.save(createUser(user)).dto();
   }
