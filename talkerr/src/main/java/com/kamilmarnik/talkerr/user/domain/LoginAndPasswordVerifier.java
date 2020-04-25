@@ -9,28 +9,36 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 final class LoginAndPasswordVerifier {
 
-  private LoginAndPasswordVerifier() {
-    throw new AssertionError("This class can not be instantiated!");
+  String login;
+  String password;
+
+  private LoginAndPasswordVerifier(String login, String password) {
+    this.login = login;
+    this.password = password;
   }
 
-  static void verifyRegisteredLogAndPass(String login, String password) throws InvalidLoginException, InvalidPasswordException {
-    if(!isCorrectRegisteredLogin(login)) {
+  static LoginAndPasswordVerifier create(String login, String password) {
+    return new LoginAndPasswordVerifier(login, password);
+  }
+
+  void verify() throws InvalidLoginException, InvalidPasswordException {
+    if(!isCorrectRegisteredLogin()) {
       throw new InvalidLoginException("Incorrect registered username!");
     }
 
-    if(!isCorrectRegisteredPassword(password)) {
+    if(!isCorrectRegisteredPassword()) {
       throw new InvalidPasswordException("Incorrect registered password");
     }
   }
 
-  private static boolean isCorrectRegisteredLogin(String login) {
+  private boolean isCorrectRegisteredLogin() {
     return login.length() >= UserDto.MIN_LOG_LEN &&
         login.length() <= UserDto.MAX_LOG_LEN &&
         startsWithLetter(login) &&
         isAlphaNum(login);
   }
 
-  private static boolean isCorrectRegisteredPassword(String password) {
+  private boolean isCorrectRegisteredPassword() {
     return password.length() >= UserDto.MIN_PASS_LEN &&
         password.length() <= UserDto.MAX_PASS_LEN &&
         startsWithLetter(password) &&
@@ -39,21 +47,21 @@ final class LoginAndPasswordVerifier {
         isAlphaNum(password);
   }
 
-  private static boolean startsWithLetter(String str) {
+  private boolean startsWithLetter(String str) {
     return Character.isLetter(str.charAt(0));
   }
 
-  private static boolean containsNumber(String str) {
+  private boolean containsNumber(String str) {
     return str.chars()
         .anyMatch(Character::isDigit);
   }
 
-  private static boolean containsCapitalLetter(String str) {
+  private boolean containsCapitalLetter(String str) {
     return str.chars()
         .anyMatch(Character::isUpperCase);
   }
 
-  private static boolean isAlphaNum(String str) {
+  private boolean isAlphaNum(String str) {
     return str.chars()
         .allMatch(ch -> ch >= 'A' && ch <= 'Z' ||
             ch >= 'a' && ch <= 'z' ||
